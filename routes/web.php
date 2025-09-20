@@ -19,6 +19,9 @@ Route::post('/login', [LoginController::class, 'login']);
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+//dashboard pegawai
+Route::get('/dashboardpegawai', [DashboardController::class, 'index']);
+
 // Dashboard (bisa dikasih middleware kalau mau)
 Route::get('/dashboard', function () {
     return view('dashboard');

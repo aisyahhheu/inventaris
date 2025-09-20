@@ -3,309 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventaris - Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            display: flex;
+        :root {
+            --primary-blue: #3498db;
+            --primary-orange: #f39c12;
+            --primary-green: #2ecc71;
+            --primary-purple: #9b59b6;
+            --bg-light: #ecf0f1;
+            --text-dark: #2c3e50;
+            --border-light: #bdc3c7;
+            --sidebar-bg: #2c3e50;
         }
 
-        /* --- Sidebar Styles --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
         .sidebar {
             width: 250px;
-            background-color: #0d1e37;
-            color: #fff;
+            background-color: var(--sidebar-bg);
+            color: white;
             padding: 20px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
-        .sidebar .logo-container {
-            text-align: center;
+        .logo {
+            display: flex;
+            align-items: center;
             margin-bottom: 30px;
         }
 
-        .sidebar .logo-container img {
-            max-width: 100%;
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            margin-right: 10px;
         }
 
-        .sidebar .menu {
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+
+        .menu {
             list-style: none;
             padding: 0;
             flex-grow: 1;
         }
 
-        .sidebar .menu-item {
-            margin-bottom: 5px; /* Mengurangi spasi antar item */
+        .menu li {
+            margin-bottom: 10px;
         }
-        
-        .sidebar .menu-link {
+
+        .menu a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 10px 15px;
             display: block;
-            padding: 10px 15px; /* Mengurangi padding untuk mengecilkan tulisan */
-            color: #b0c4de;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background-color 0.3s, color 0.3s;
-            font-size: 0.9rem; /* Mengecilkan ukuran font */
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
         }
 
-        .sidebar .menu-link:hover, .sidebar .menu-link.active {
-            background-color: #1a2a44;
-            color: #fff;
-            font-weight: 600;
+        .menu a:hover,
+        .menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
         }
 
-        .sidebar .menu-link.active::before {
-            content: '';
-            display: inline-block;
-            width: 5px;
-            height: 100%;
-            background-color: #007bff;
-            border-radius: 3px;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        /* --- Main Content Area --- */
-        .main-container {
-            flex-grow: 1;
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        /* --- Top Navbar --- */
-        .top-navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-        
-        .top-navbar .welcome {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .top-navbar .user-info a {
-            color: #007bff;
-            text-decoration: none;
+        .menu-item {
+            padding: 10px 15px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
             font-weight: 500;
         }
 
-        /* --- Cards Section --- */
-        .card-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        .submenu {
+            list-style: none;
+            padding-left: 30px;
+            margin-top: -5px;
         }
-        .info-card {
-            background-color: #fff;
+
+        .submenu li a {
+            padding: 5px 0;
+        }
+
+        .logout {
+            margin-top: auto;
+        }
+
+        .logout a {
+            color: #e74c3c;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Card Styling */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
             color: white;
-            flex: 1;
-            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 180px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .info-card h3 {
-            font-size: 2rem;
-            margin: 0;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        .info-card p {
-            font-size: 1rem;
-            opacity: 0.8;
+        .card.blue-card { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .card.orange-card { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .card.green-card { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .card.purple-card { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+        .card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
 
-        .info-card .btn {
+        .btn-ajukan, .btn-detail {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            margin-top: 10px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .info-card.blue { background-color: #4a73df; }
-        .info-card.yellow { background-color: #f6c23e; }
-        .info-card.green { background-color: #1cc88a; }
-        .info-card.purple { background-color: #a55bff; }
-        
-        /* --- Chart and Table Sections --- */
-        .content-section {
-            background-color: #fff;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .content-section h4 {
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
             font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 0.9em;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        /* Responsive */
+        .btn-ajukan:hover, .btn-detail:hover {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3em;
+            color: rgba(255, 255, 255, 0.2);
+            transform: rotate(15deg);
+        }
+
+        /* Statistik Styling */
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .statistic-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .stat-card:nth-child(2) .stat-number { color: var(--primary-orange); }
+        .stat-card:nth-child(3) .stat-number { color: var(--primary-green); }
+        .stat-card:nth-child(4) .stat-number { color: var(--primary-purple); }
+
+        .stat-text {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* Media Queries untuk responsif */
+        @media (max-width: 1200px) {
+            .card-container, .statistic-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
             .sidebar {
                 width: 100%;
                 height: auto;
-                position: relative;
-                box-shadow: none;
+                padding: 15px;
             }
-            .main-container {
-                margin-left: 0;
+            .main-content {
+                padding: 20px;
             }
-            .top-navbar {
-                left: 0;
-                border-radius: 0;
+            .card-container, .statistic-container {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
 
+<div class="container">
     <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <img src="{{ asset('path/to/lldikti-logo.png') }}" alt="LLDIKTI Logo">
-            </div>
-            <ul class="menu">
-                <li class="menu-item"><a href="#" class="menu-link active">Dashboard</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Manajemen Inventaris</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Barang Masuk</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Barang Keluar</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Data Aset</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Peminjaman Aset</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Pemeliharaan Aset</a></li>
-                <li class="menu-item"><a href="#" class="menu-link">Laporan</a></li>
+        <div class="logo">
+            <img src="lldikti logo.png" alt="LLDIKTI Logo">
+            <span class="logo-text">LOGO</span>
+        </div>
+        <ul class="menu">
+            <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li class="menu-item"><i class="fas fa-cogs"></i> Pemeliharaan</li>
+            <ul class="submenu">
+                <li><a href="#">Perbaikan</a></li>
+                <li><a href="#">Pembelian Sparepart</a></li>
             </ul>
-        </div>
-        <div class="sidebar-footer">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="menu-link">Log out</button>
-            </form>
-        </div>
+            <li><a href="#">Peminjaman</a></li>
+            <li><a href="#">Laporan Saya</a></li>
+            <li class="logout"><a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+        </ul>
     </div>
 
-    <div class="main-container">
-        <div class="top-navbar">
-            <div class="welcome">Selamat Datang, Admin!</div>
-            <div class="user-info">
-                <a href="#">{{ Auth::user()->name }}</a>
+    <div class="main-content">
+        <div class="header">
+            <div class="header-left">
+                <span class="header-title">HOME</span>
             </div>
         </div>
 
         <div class="card-container">
-            <div class="info-card blue">
-                <h3>100</h3>
-                <p>Jumlah Aset</p>
-                <a href="#" class="btn btn-outline-light">Lihat Detail</a>
+            <div class="card blue-card">
+                <h3>Perbaikan</h3>
+                <button class="btn-ajukan">Ajukan</button>
+                <i class="icon fas fa-cogs"></i>
             </div>
-            <div class="info-card yellow">
-                <h3>17</h3>
-                <p>Status Peminjaman</p>
-                <a href="#" class="btn btn-outline-light">Lihat Detail</a>
+            <div class="card orange-card">
+                <h3>Pembelian Sparepart</h3>
+                <button class="btn-ajukan">Ajukan</button>
+                <i class="icon fas fa-wrench"></i>
             </div>
-            <div class="info-card green">
-                <h3>20</h3>
-                <p>Pemeliharaan Aset</p>
-                <a href="#" class="btn btn-outline-light">Catatan Perawatan</a>
+            <div class="card green-card">
+                <h3>Peminjaman</h3>
+                <button class="btn-ajukan">Ajukan</button>
+                <i class="icon fas fa-box-open"></i>
             </div>
-            <div class="info-card purple">
-                <h3>2</h3>
-                <p>Laporan Terbaru</p>
-                <a href="#" class="btn btn-outline-light">Lihat Laporan</a>
+            <div class="card purple-card">
+                <h3>Laporan Saya</h3>
+                <button class="btn-detail">Lihat Detail</button>
+                <i class="icon fas fa-user"></i>
             </div>
         </div>
 
-        <div class="content-section">
-            <h4>Grafik Transaksi</h4>
-            <canvas id="myChart"></canvas>
-        </div>
-
-        <div class="content-section">
-            <h4>Aktivitas Terbaru</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Tipe</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Jumlah</th>
-                        <th>Kategori Barang</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2025-09-03</td>
-                        <td><span class="badge bg-success">Masuk</span></td>
-                        <td>BR-10001</td>
-                        <td>Proyektor</td>
-                        <td>3</td>
-                        <td>Elektronik</td>
-                    </tr>
-                    <tr>
-                        <td>2025-09-03</td>
-                        <td><span class="badge bg-danger">Keluar</span></td>
-                        <td>BR-10001</td>
-                        <td>Proyektor</td>
-                        <td>1</td>
-                        <td>Elektronik</td>
-                    </tr>
-                </tbody>
-            </table>
+        <h2 class="section-title"><i class="fas fa-chart-bar"></i> Statistik Singkat</h2>
+        <div class="statistic-container">
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-text">Pengajuan Perbaikan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">7</div>
+                <div class="stat-text">Pembelian Sparepart</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-text">Peminjaman Aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">20</div>
+                <div class="stat-text">Total Laporan</div>
+            </div>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('myChart');
+</div>
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                datasets: [{
-                    label: 'Barang Masuk',
-                    data: [12, 19, 3, 5, 2, 3, 7, 10, 15, 8, 11, 14],
-                    backgroundColor: '#4a73df', // Warna biru
-                    borderWidth: 1
-                },
-                {
-                    label: 'Barang Keluar',
-                    data: [5, 7, 4, 8, 6, 5, 9, 12, 10, 6, 9, 11],
-                    backgroundColor: '#1cc88a', // Warna hijau
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>
