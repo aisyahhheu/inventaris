@@ -6,12 +6,16 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\DashboardController;
+<<<<<<< HEAD
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\DataAsetController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PemeliharaanController;
 
+=======
+use App\Http\Controllers\DashboardPegawaiController;
+>>>>>>> manda
 
 // Halaman awal → redirect ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -35,6 +39,13 @@ Route::post('/login', [LoginController::class, 'login']);
     Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 
 
+<<<<<<< HEAD
+=======
+//dashboard pegawai
+Route::get('/dashboardpegawai', [DashboardController::class, 'index']);
+
+// Dashboard (bisa dikasih middleware kalau mau)
+>>>>>>> manda
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');

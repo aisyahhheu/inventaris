@@ -27,8 +27,8 @@
             font-size: 2.5rem;
         }
         .btn-outline-light {
-            background-color: rgba(255, 255, 255, 0.2); 
-            border-color: rgba(255, 255, 255, 0.7); 
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.7);
             color: rgba(255, 255, 255, 0.9);
             font-size: 0.9rem;
             padding: 8px 24px;
@@ -37,7 +37,7 @@
         }
         .btn-outline-light:hover {
             background-color: #fff;
-            color: #4a73df; 
+            color: #4a73df;
         }
         .badge {
             font-weight: 600;
@@ -125,7 +125,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Grafik Transaksi Section -->
         <div class="card shadow-sm mb-4">
             <div class="card-body p-4">
