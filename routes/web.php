@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardPegawaiController;
 
 // Halaman awal → redirect ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
