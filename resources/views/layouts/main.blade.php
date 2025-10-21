@@ -488,14 +488,15 @@
                     </ul>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                     <a href="{{ route('laporanadmin') }}"
+                                class="menu-link {{ Request::routeIs('laporanadmin') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
                 </li>
                 <!-- Added separator and moved logout below reports -->
                 <li class="menu-separator"></li>
                 <li class="menu-item">
-                    <a href="#" class="logout-link">
+                    <a href="login" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Log Out
                     </a>
                 </li>

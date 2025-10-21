@@ -25,17 +25,17 @@
             font-weight: 600;
         }
 
+        /* Card Style */
         .card {
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            /* Set margin-top ke 0 untuk menghilangkan jarak berlebih dari atas (navbar/header Selamat Datang Admin) */
-            margin-top: 0;
+            /* Margin atas 0 untuk mendekatkan ke navbar/header */
+            margin-top: 0; 
             margin-bottom: 20px;
         }
 
-        /* CSS Lainnya Dibiarkan Sama Sesuai Contoh Anda */
         .card-header {
             background-color: #ffffff;
             color: #333;
@@ -54,16 +54,17 @@
             overflow-x: auto;
         }
 
-        #tabelPengajuanPerbaikan {
+        /* Styling Tabel Pembelian Sparepart */
+        #tabelPembelianSparepart { 
             width: 100%;
-            min-width: 900px;
+            min-width: 900px; /* Menyamakan lebar tabel */
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 5px;
         }
 
-        #tabelPengajuanPerbaikan th,
-        #tabelPengajuanPerbaikan td {
+        #tabelPembelianSparepart th,
+        #tabelPembelianSparepart td {
             padding: 12px 10px;
             text-align: left;
             border-bottom: 1px solid #eee;
@@ -71,18 +72,18 @@
             font-size: 0.9em;
         }
 
-        #tabelPengajuanPerbaikan th:first-child,
-        #tabelPengajuanPerbaikan td:first-child {
+        #tabelPembelianSparepart th:first-child,
+        #tabelPembelianSparepart td:first-child {
             border-left: 1px solid #eee;
         }
 
-        #tabelPengajuanPerbaikan thead th {
+        #tabelPembelianSparepart thead th {
             background-color: #f0f4f7;
             color: #333;
             font-weight: 700;
         }
 
-        #tabelPengajuanPerbaikan tbody tr:hover {
+        #tabelPembelianSparepart tbody tr:hover {
             background-color: #f9f9f9;
         }
 
@@ -96,27 +97,11 @@
             text-transform: uppercase;
         }
 
-        /* Sesuaikan status class jika diperlukan (Saya menggunakan status umum) */
-        .status-disetujui {
-            background-color: #28a745;
-        }
-
-        .status-ditolak {
-            background-color: #dc3545;
-        }
-
-        .status-diproses {
-            background-color: #007bff;
-        }
-
-        .status-menunggu {
-            background-color: #ffc107;
-            color: #333;
-        }
-
-        .status-selesai {
-            background-color: #6c757d;
-        }
+        .status-disetujui { background-color: #28a745; }
+        .status-ditolak { background-color: #dc3545; }
+        .status-diproses { background-color: #007bff; }
+        .status-menunggu { background-color: #ffc107; color: #333; }
+        .status-selesai { background-color: #6c757d; }
 
         .btn-detail {
             background-color: #209439;
@@ -164,15 +149,8 @@
         }
 
         @keyframes animatetop {
-            from {
-                top: -300px;
-                opacity: 0
-            }
-
-            to {
-                top: 5%;
-                opacity: 1
-            }
+            from { top: -300px; opacity: 0 }
+            to { top: 5%; opacity: 1 }
         }
 
         .modal-header {
@@ -256,21 +234,10 @@
             transition: background-color 0.3s;
         }
 
-        .btn-setujui {
-            background-color: #28a745;
-        }
-
-        .btn-tolak {
-            background-color: #dc3545;
-        }
-
-        .btn-pimpinan {
-            background-color: #007bff;
-        }
-
-        .btn-kembali {
-            background-color: #343a40;
-        }
+        .btn-setujui { background-color: #28a745; }
+        .btn-tolak { background-color: #dc3545; }
+        .btn-pimpinan { background-color: #007bff; }
+        .btn-kembali { background-color: #343a40; }
 
         .action-btn:hover {
             filter: brightness(1.1);
@@ -279,24 +246,24 @@
 
     {{-- KONTEN UTAMA --}}
     <div class="card"
-        id="mainPengajuanCard" {{-- ID diubah ke Pengajuan --}}
-        data-detail-url="{{ route('pemeliharaan.detail_perbaikan', ['id' => 'TEMP_ID']) }}"> {{-- ROUTE diubah ke pengajuan perbaikan --}}
+        id="mainPembelianCard" 
+        data-detail-url="{{ route('pembelian.detail_sparepart', ['id' => 'TEMP_ID']) }}">
 
         {{-- HEADER BIRU (Menggunakan page-subheader-card) --}}
         <div class="page-subheader-card">
-            <h4 class="mb-0">Pengajuan Perbaikan Aset</h4> {{-- JUDUL diubah ke Pengajuan Perbaikan --}}
+            <h4 class="mb-0">Pembelian Sparepart</h4> 
         </div>
 
         {{-- CARD BODY (Tabel Data) --}}
         <div class="card-body">
-            <table id="tabelPengajuanPerbaikan">
+            <table id="tabelPembelianSparepart">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Kode Aset</th>
                         <th>Nama Aset</th>
                         <th>Diajukan Oleh</th>
-                        <th>Tanggal Pengajuan</th>
+                        <th>Tanggal Pembelian</th>
                         <th>Jenis Kerusakan</th>
                         <th>Status</th>
                         <th>Aksi</th>
@@ -304,20 +271,18 @@
                 </thead>
                 <tbody>
                     @php $no = 1; @endphp
-                    {{-- PASTIKAN variabel dari controller adalah $pengajuan --}}
-                    @forelse ($pengajuan as $data)
+                    @forelse ($pembelian as $data) 
                     @php
                     $status = $data->status ?? 'Menunggu';
-                    // Class disesuaikan untuk status perbaikan
-                    $statusClass = 'status-' . strtolower(str_replace(' ', '', $status));
-                    $tglPengajuan = $data->tgl_pengajuan ? \Carbon\Carbon::parse($data->tgl_pengajuan)->format('d/m/Y') : '-';
+                    $statusClass = 'status-' . strtolower(str_replace(' ', '', $status)); 
+                    $tglPembelian = $data->tgl_pembelian ? \Carbon\Carbon::parse($data->tgl_pembelian)->format('d/m/Y') : '-'; 
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $data->kode_aset ?? '-' }}</td>
                         <td>{{ $data->nama_aset ?? '-' }}</td>
                         <td>{{ $data->nama_pegawai ?? '-' }}</td>
-                        <td>{{ $tglPengajuan }}</td>
+                        <td>{{ $tglPembelian }}</td> 
                         <td>{{ $data->jenis_kerusakan ?? '-' }}</td>
                         <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
                         <td>
@@ -325,7 +290,7 @@
                             <button
                                 class="btn-detail"
                                 data-id="{{ $data->id }}"
-                                onclick="tampilkanDetailPengajuan(this)"> {{-- Fungsi diubah ke tampilkanDetailPengajuan --}}
+                                onclick="tampilkanDetailPembelian(this)"> 
                                 Lihat Detail
                             </button>
                             @else
@@ -336,7 +301,7 @@
                     @empty
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 20px; color: #6c757d;">
-                            Tidak ada pengajuan perbaikan yang ditemukan.
+                            Tidak ada data pembelian sparepart yang ditemukan.
                         </td>
                     </tr>
                     @endforelse
@@ -347,36 +312,36 @@
 </div>
 
 {{-- MODAL DETAIL --}}
-<div id="detailPengajuanModal" class="modal"> {{-- ID modal diubah ke Pengajuan --}}
+<div id="detailPembelianModal" class="modal"> 
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Detail Pengajuan Perbaikan</h5>
-            <span class="close-button" onclick="tutupModalPengajuan()">&times;</span> {{-- Fungsi tutup diubah --}}
+            <h5 class="modal-title">Detail Pembelian Sparepart</h5> 
+            <span class="close-button" onclick="tutupModalPembelian()">&times;</span> 
         </div>
-        <div class="modal-body" id="modal-body-content-pengajuan"> {{-- ID body modal diubah --}}
+        <div class="modal-body" id="modal-body-content-pembelian"> 
             <div style="text-align:center;">
-                <p>Memuat detail pengajuan...</p>
+                <p>Memuat detail pembelian...</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const mainCardPengajuan = document.getElementById('mainPengajuanCard');
+    const mainCardPembelian = document.getElementById('mainPembelianCard'); 
 
-    if (!mainCardPengajuan) {
-        console.error("Kesalahan JavaScript: Elemen 'mainPengajuanCard' tidak ditemukan.");
+    if (!mainCardPembelian) {
+        console.error("Kesalahan JavaScript: Elemen 'mainPembelianCard' tidak ditemukan.");
     }
 
-    const baseUrlPengajuan = mainCardPengajuan ? mainCardPengajuan.getAttribute('data-detail-url') : null;
+    const baseUrlPembelian = mainCardPembelian ? mainCardPembelian.getAttribute('data-detail-url') : null; 
 
-    function tampilkanDetailPengajuan(element) {
+    function tampilkanDetailPembelian(element) { 
         const id = element.getAttribute('data-id');
-        const modalBody = document.getElementById('modal-body-content-pengajuan');
-        const detailModal = document.getElementById('detailPengajuanModal');
+        const modalBody = document.getElementById('modal-body-content-pembelian'); 
+        const detailModal = document.getElementById('detailPembelianModal'); 
 
-        if (!baseUrlPengajuan) {
-            console.error("Kesalahan: Base URL route tidak ditemukan. Pastikan 'pemeliharaan.detail_perbaikan' terdaftar di web.php.");
+        if (!baseUrlPembelian) { 
+            console.error("Kesalahan: Base URL route tidak ditemukan. Pastikan 'pembelian.detail_sparepart' terdaftar di web.php.");
             modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
                                     Kesalahan Konfigurasi Route. Cek Console Log.
                                   </p>`;
@@ -388,7 +353,7 @@
         modalBody.innerHTML = '<div style="text-align:center; padding: 50px;"><p style="margin-top: 10px;">Memuat data...</p></div>';
         detailModal.style.display = 'block';
 
-        const detailUrl = baseUrlPengajuan.replace('TEMP_ID', id);
+        const detailUrl = baseUrlPembelian.replace('TEMP_ID', id); 
 
         fetch(detailUrl)
             .then(response => {
@@ -408,15 +373,15 @@
             });
     }
 
-    function tutupModalPengajuan() {
-        document.getElementById('detailPengajuanModal').style.display = 'none';
+    function tutupModalPembelian() { 
+        document.getElementById('detailPembelianModal').style.display = 'none'; 
     }
 
-    // Mengganti listener window.onclick agar hanya menutup modal pengajuan ini
+    // Mengganti listener window.onclick agar hanya menutup modal pembelian ini
     window.onclick = function(event) {
-        const modal = document.getElementById('detailPengajuanModal');
+        const modal = document.getElementById('detailPembelianModal'); 
         if (event.target == modal) {
-            tutupModalPengajuan();
+            tutupModalPembelian(); 
         }
     }
 </script>
