@@ -9,7 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_perbaikan', function (Blueprint $table) {
-            $table->string('status', 50)->default('Disetujui');
+            if (!Schema::hasColumn('form_perbaikan', 'status')) {
+                $table->string('status')->default('Disetujui');
+            }
         });
     }
 

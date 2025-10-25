@@ -32,5 +32,10 @@ class PengajuanPerbaikan extends Model
         'tgl_pengajuan' => 'date',
     ];
     
-    // Di sini Anda bisa menambahkan fungsi relasi seperti asset() atau user()
+     public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
+
+

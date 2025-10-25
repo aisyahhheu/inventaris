@@ -6,7 +6,6 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\DashboardController;
-<<<<<<< HEAD
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\DataAsetController;
@@ -14,9 +13,14 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PemeliharaanController;
 use App\Http\Controllers\LaporanController;
 
-=======
 use App\Http\Controllers\DashboardPegawaiController;
->>>>>>> manda
+use App\Http\Controllers\FormPembelianSparepartController;
+use App\Http\Controllers\FormPerbaikanController;
+use App\Http\Controllers\FormPeminjamanController;
+use App\Http\Controllers\HalamanLaporan;
+
+use App\Http\Controllers\DashboardPimpinanController;
+
 
 // Halaman awal → redirect ke login
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -39,22 +43,33 @@ Route::post('/login', [LoginController::class, 'login']);
     Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 
+// Rute untuk Halaman Dashboard Admin
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-<<<<<<< HEAD
-=======
-//dashboard pegawai
-Route::get('/dashboardpegawai', [DashboardController::class, 'index']);
+// Rute untuk Halaman Dashboard Pegawai
+Route::middleware(['auth', 'role:pegawai'])->group(function () {
+    Route::get('/dashboardpegawai', [DashboardPegawaiController::class, 'index'])->name('dashboardpegawai');
+});
 
-// Dashboard (bisa dikasih middleware kalau mau)
->>>>>>> manda
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('/dashboardpegawai', [DashboardPegawaiController::class, 'index'])->name('dashboard.pegawai');
 
-// Rute untuk Halaman Dashboard
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+// Form routes for pegawai
+Route::get('/form-perbaikan', [FormPerbaikanController::class, 'create'])->name('form.perbaikan.create');
+Route::post('/form-perbaikan', [FormPerbaikanController::class, 'store'])->name('form.perbaikan.store');
+
+Route::get('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'showForm'])->name('form.pembelian.sparepart');
+Route::post('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'store'])->name('form.pembelian.sparepart.store');
+
+Route::get('/form-peminjaman', [FormPeminjamanController::class, 'showForm'])->name('form.peminjaman');
+Route::post('/form-peminjaman', [FormPeminjamanController::class, 'store'])->name('form.peminjaman.store');
+
+Route::get('/halaman-laporan', [HalamanLaporan::class, 'index'])->name('halaman.laporan');
+
+// rute dashboard pimpinan
+Route::get('/dashboardpimpinan', [DashboardPimpinanController::class, 'index'])->name('dashboardpimpinan');
+
 
 // Rute untuk Manajemen Inventaris
 Route::get('/barang-masuk', [BarangMasukController::class, 'index'])->name('barangmasuk');

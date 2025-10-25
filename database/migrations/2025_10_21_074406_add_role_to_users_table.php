@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('form_peminjaman', function (Blueprint $table) {
-            $table->string('status', 50)->default('Disetujui');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('role')->default('pegawai'); // tambahkan kolom role
         });
     }
 
     public function down(): void
     {
-        Schema::table('form_peminjaman', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
         });
     }
 };

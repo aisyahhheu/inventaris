@@ -781,12 +781,12 @@
                     <i class="fas fa-tools"></i> Pemeliharaan
                 </li>
                 <ul class="submenu" id="pemeliharaan-submenu">
-                    <li><a href="{{ route('form.perbaikan') }}"><i class="fas fa-wrench"></i> Perbaikan</a></li>
+                    <li><a href="{{ route('form.perbaikan.create') }}"><i class="fas fa-wrench"></i> Perbaikan</a></li>
                     <li><a href="{{ route('form.pembelian.sparepart') }}"><i class="fas fa-shopping-cart"></i> Pembelian Sparepart</a></li>
                 </ul>
                 <li><a href="{{ route('form.peminjaman') }}"><i class="fas fa-hand-holding"></i> Peminjaman</a></li>
                 <li><a href="{{ route('halaman.laporan') }}"><i class="fas fa-file-alt"></i> Laporan Saya</a></li>
-                <li class="logout"><a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+                <li class="logout"><a href="login"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
             </ul>
         </div>
         <div class="main-content">
