@@ -11,8 +11,8 @@
         @csrf
         <div class="form-grid">
             <div class="form-group">
-                <label for="tanggal">Tanggal Pengajuan</label>
-                <input type="date" id="tanggal" name="tanggal" required>
+                <label for="tanggalPengajuan">Tanggal Pengajuan</label>
+                <input type="date" id="tanggalPengajuan" name="tanggalPengajuan" required>
             </div>
             <div class="form-group">
                 <label for="namaSparepart">Nama Sparepart</label>
