@@ -11,8 +11,8 @@
             @csrf
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="tanggal">Tanggal Pengajuan</label>
-                    <input type="date" id="tanggal" name="tanggal">
+                    <label for="tanggalPengajuan">Tanggal Pengajuan</label>
+                    <input type="date" id="tanggalPengajuan" name="tanggalPengajuan">
                 </div>
                 <div class="form-group">
                     <label for="jenisKerusakan">Jenis Kerusakan</label>
@@ -23,8 +23,8 @@
                     <input type="text" id="namaBarang" name="namaBarang">
                 </div>
                 <div class="form-group">
-                    <label for="keterangan">Keterangan Tambahan</label>
-                    <textarea id="keterangan" name="keterangan" rows="1"></textarea>
+                    <label for="keteranganTambahan">Keterangan Tambahan</label>
+                    <textarea id="keteranganTambahan" name="keteranganTambahan" rows="1"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="kodeBarang">Kode Barang</label>
