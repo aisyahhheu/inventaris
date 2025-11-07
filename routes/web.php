@@ -12,14 +12,18 @@ use App\Http\Controllers\DataAsetController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PemeliharaanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\laporanpimpinanController;
 
 use App\Http\Controllers\DashboardPegawaiController;
 use App\Http\Controllers\FormPembelianSparepartController;
 use App\Http\Controllers\FormPerbaikanController;
 use App\Http\Controllers\FormPeminjamanController;
 use App\Http\Controllers\HalamanLaporan;
+use App\Http\Controllers\HalamanLaporanpimpinan;
+
 
 use App\Http\Controllers\DashboardPimpinanController;
+use App\Http\Controllers\PeminjamanPimpinanController;
 
 
 // Halaman awal → redirect ke login
@@ -66,6 +70,7 @@ Route::get('/form-peminjaman', [FormPeminjamanController::class, 'showForm'])->n
 Route::post('/form-peminjaman', [FormPeminjamanController::class, 'store'])->name('form.peminjaman.store');
 
 Route::get('/halaman-laporan', [HalamanLaporan::class, 'index'])->name('halaman.laporan');
+Route::get('/halaman-laporanpimpinan', [HalamanLaporanpimpinan::class, 'index'])->name('halaman.laporanpimpinan');
 
 // rute dashboard pimpinan
 Route::get('/dashboardpimpinan', [DashboardPimpinanController::class, 'index'])->name('dashboardpimpinan');
@@ -113,8 +118,8 @@ Route::get('/pembelian-sparepart', [PemeliharaanController::class, 'showPembelia
 
 Route::get('/pembelian/detail-sparepart/{id}', [PemeliharaanController::class, 'detailSparepart'])
     ->name('pembelian.detail_sparepart');
-
 Route::get('/laporanadmin', [LaporanController::class, 'index'])->name('laporanadmin');
+Route::get('/laporanpimpinan', [laporanpimpinanController::class, 'index'])->name('laporanpimpinan');
 
 // ROUTE DETAIL LAPORAN
 Route::get('/laporan/data-aset', [LaporanController::class, 'dataAset'])->name('laporan.data_aset');
@@ -124,5 +129,26 @@ Route::get('/laporan/pengajuan-perbaikan', [LaporanController::class, 'pengajuan
 Route::get('/laporan/pembelian-sparepart', [LaporanController::class, 'pembelianSparepart'])->name('laporan.pembelian_sparepart');
 Route::get('/laporan/ringkasan', [LaporanController::class, 'ringkasan'])->name('laporan.ringkasan');
 
+// ROUTE DETAIL LAPORAN Pimpinan
+Route::get('/laporanpimpinan/data-aset', [laporanpimpinanController::class, 'dataAset'])->name('laporanpimpinan.data_aset');
+Route::get('/laporanpimpinan/barang-masuk', [laporanpimpinanController::class, 'barangMasuk'])->name('laporanpimpinan.barang_masuk');
+Route::get('/laporanpimpinan/barang-keluar', [laporanpimpinanController::class, 'barangKeluar'])->name('laporanpimpinan.barang_keluar');
+Route::get('/laporanpimpinan/pengajuan-perbaikan', [laporanpimpinanController::class, 'pengajuanPerbaikan'])->name('laporanpimpinan.pengajuan_perbaikan');
+Route::get('/laporanpimpinan/pembelian-sparepart', [laporanpimpinanController::class, 'pembelianSparepart'])->name('laporanpimpinan.pembelian_sparepart');
+Route::get('/laporanpimpinan/ringkasan', [laporanpimpinanController::class, 'ringkasan'])->name('laporanpimpinan.ringkasan');
+
 // Logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+
+Route::get('/sparepartpimpinan', function () {
+    return view('sparepartpimpinan');
+})->name('sparepartpimpinan');
+
+Route::get('/perbaikanpimpinan', function () {
+    return view('perbaikanpimpinan');
+})->name('perbaikanpimpinan');
+
+Route::get('/peminjamanpimpinan', function () {
+    return view('peminjamanpimpinan');
+})->name('peminjamanpimpinan');

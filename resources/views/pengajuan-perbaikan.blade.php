@@ -1,423 +1,504 @@
-@extends('layouts.main')
+@extends('layouts.pimpinan')
+
+@section('title', 'Dashboard Persetujuan Peminjaman Aset')
 
 @section('content')
 
-<div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pimpinan - Persetujuan Peminjaman</title>
+    {{-- Memuat Tailwind CSS & Font Awesome --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <style>
-        .page-header {
-            padding: 0 0 10px 0;
-            color: #333;
-            font-size: 1.2em;
-            font-weight: 500;
+        /* Palet Warna Kustom (Lebih Profesional) */
+        :root {
+            --color-primary: #1E3A8A; /* Biru Gelap (Kontrol) */
+            --color-danger: #DC2626; /* Merah (Aksi Mendesak) */
+            --color-warning: #D97706; /* Kuning/Oranye (Peringatan) */
+            --color-success: #059669; /* Hijau (Disetujui/Sukses) */
         }
 
-        .page-subheader-card {
-            background-color: #0b4f8c;
-            color: white;
-            padding: 15px;
-            border-bottom: none;
-            margin-bottom: 0 !important;
+        .bg-card-primary { background-color: var(--color-primary); }
+        .bg-card-danger { background-color: var(--color-danger); }
+        .bg-card-warning { background-color: var(--color-warning); }
+        .bg-card-success { background-color: var(--color-success); }
+        
+        /* Box Shadow "Wahh" (Elegance) */
+        .card-shadow-xl { 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 
+                        0 4px 6px rgba(0, 0, 0, 0.05); 
         }
 
-        .page-subheader-card h2 {
-            margin: 0;
-            font-size: 1.8em;
-            font-weight: 600;
+        /* Hover Effect Pop-up */
+        .card-hover-pop:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
+        
+        /* Warna Latar Baris Ganjil-Genap */
+        .bg-odd-row { background-color: #F9FAFB; }
+        .bg-even-row { background-color: #FFFFFF; }
 
-        .card {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            /* Set margin-top ke 0 untuk menghilangkan jarak berlebih dari atas (navbar/header Selamat Datang Admin) */
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
+        /* Sticky Columns */
+        .sticky-col { position: sticky; left: 0; z-index: 10; }
+        .sticky-action { position: sticky; right: 0; z-index: 10; }
+        
+        /* Sticky Column Adjustments for zebra stripping */
+        tr:nth-child(odd) .sticky-col,
+        tr:nth-child(odd) .sticky-action { background-color: #F9FAFB; }
+        tr:nth-child(even) .sticky-col,
+        tr:nth-child(even) .sticky-action { background-color: #FFFFFF; }
 
-        /* CSS Lainnya Dibiarkan Sama Sesuai Contoh Anda */
-        .card-header {
-            background-color: #ffffff;
-            color: #333;
-            padding: 18px 20px;
-            border-bottom: 1px solid #ddd;
-        }
+        /* Sticky Header Adjustment */
+        th { position: sticky; top: 0; z-index: 20; background-color: #E5E7EB; }
+        .sticky-col.header, .sticky-action.header { background-color: #E5E7EB; }
 
-        .card-header h3 {
-            margin: 0;
-            font-size: 1.6em;
-            font-weight: 600;
-        }
-
-        .card-body {
-            padding: 20px;
-            overflow-x: auto;
-        }
-
-        #tabelPengajuanPerbaikan {
-            width: 100%;
-            min-width: 900px;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 5px;
-        }
-
-        #tabelPengajuanPerbaikan th,
-        #tabelPengajuanPerbaikan td {
-            padding: 12px 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            border-right: 1px solid #eee;
-            font-size: 0.9em;
-        }
-
-        #tabelPengajuanPerbaikan th:first-child,
-        #tabelPengajuanPerbaikan td:first-child {
-            border-left: 1px solid #eee;
-        }
-
-        #tabelPengajuanPerbaikan thead th {
-            background-color: #f0f4f7;
-            color: #333;
-            font-weight: 700;
-        }
-
-        #tabelPengajuanPerbaikan tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .badge {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.75em;
-            font-weight: bold;
-            color: white;
-            display: inline-block;
-            text-transform: uppercase;
-        }
-
-        /* Sesuaikan status class jika diperlukan (Saya menggunakan status umum) */
-        .status-disetujui {
-            background-color: #28a745;
-        }
-
-        .status-ditolak {
-            background-color: #dc3545;
-        }
-
-        .status-diproses {
-            background-color: #007bff;
-        }
-
-        .status-menunggu {
-            background-color: #ffc107;
-            color: #333;
-        }
-
-        .status-selesai {
-            background-color: #6c757d;
-        }
-
-        .btn-detail {
-            background-color: #209439;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: background-color 0.3s;
-        }
-
-        .btn-detail:hover {
-            background-color: #1a7a2e;
-        }
-
-        .btn-detail:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .modal-content {
-            background-color: #ffffff;
-            margin: 5% auto;
-            padding: 0;
-            width: 90%;
-            max-width: 700px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            animation-name: animatetop;
-            animation-duration: 0.4s;
-        }
-
-        @keyframes animatetop {
-            from {
-                top: -300px;
-                opacity: 0
-            }
-
-            to {
-                top: 5%;
-                opacity: 1
-            }
-        }
-
-        .modal-header {
-            background-color: #0b4f8c;
-            color: white;
-            padding: 15px 20px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h5 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .close-button {
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .close-button:hover {
-            color: #ddd;
-        }
-
-        .modal-body {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .modal-body {
-                flex-direction: row;
-            }
-        }
-
-        .detail-info {
-            flex: 2;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-
-        .detail-info p {
-            margin-bottom: 8px;
-        }
-
-        .detail-info strong {
-            display: inline-block;
-            width: 150px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .detail-actions {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .action-btn {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-size: 0.9em;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.3s;
-        }
-
-        .btn-setujui {
-            background-color: #28a745;
-        }
-
-        .btn-tolak {
-            background-color: #dc3545;
-        }
-
-        .btn-pimpinan {
-            background-color: #007bff;
-        }
-
-        .btn-kembali {
-            background-color: #343a40;
-        }
-
-        .action-btn:hover {
-            filter: brightness(1.1);
-        }
     </style>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen">
 
-    {{-- KONTEN UTAMA --}}
-    <div class="card"
-        id="mainPengajuanCard" {{-- ID diubah ke Pengajuan --}}
-        data-detail-url="{{ route('pemeliharaan.detail_perbaikan', ['id' => 'TEMP_ID']) }}"> {{-- ROUTE diubah ke pengajuan perbaikan --}}
-
-        {{-- HEADER BIRU (Menggunakan page-subheader-card) --}}
-        <div class="page-subheader-card">
-            <h4 class="mb-0">Pengajuan Perbaikan Aset</h4> {{-- JUDUL diubah ke Pengajuan Perbaikan --}}
-        </div>
-
-        {{-- CARD BODY (Tabel Data) --}}
-        <div class="card-body">
-            <table id="tabelPengajuanPerbaikan">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode Aset</th>
-                        <th>Nama Aset</th>
-                        <th>Diajukan Oleh</th>
-                        <th>Tanggal Pengajuan</th>
-                        <th>Jenis Kerusakan</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $no = 1; @endphp
-                    {{-- PASTIKAN variabel dari controller adalah $pengajuan --}}
-                    @forelse ($pengajuan as $data)
-                    @php
-                    $status = $data->status ?? 'Menunggu';
-                    // Class disesuaikan untuk status perbaikan
-                    $statusClass = 'status-' . strtolower(str_replace(' ', '', $status));
-                    $tglPengajuan = $data->tgl_pengajuan ? \Carbon\Carbon::parse($data->tgl_pengajuan)->format('d/m/Y') : '-';
-                    @endphp
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $data->kode_aset ?? '-' }}</td>
-                        <td>{{ $data->nama_aset ?? '-' }}</td>
-                        <td>{{ $data->nama_pegawai ?? '-' }}</td>
-                        <td>{{ $tglPengajuan }}</td>
-                        <td>{{ $data->jenis_kerusakan ?? '-' }}</td>
-                        <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
-                        <td>
-                            @if(isset($data->id))
-                            <button
-                                class="btn-detail"
-                                data-id="{{ $data->id }}"
-                                onclick="tampilkanDetailPengajuan(this)"> {{-- Fungsi diubah ke tampilkanDetailPengajuan --}}
-                                Lihat Detail
-                            </button>
-                            @else
-                            <button class="btn-detail" disabled>Error ID</button>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 20px; color: #6c757d;">
-                            Tidak ada pengajuan perbaikan yang ditemukan.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <div class="flex-1 flex flex-col overflow-hidden">
+        
+        <main class="flex-1 overflow-y-auto p-4 md:p-10 space-y-10">
+            
+                    <div>
+  <h1 class="text-2xl font-extrabold text-gray-800 mb-5 flex items-center">
+    <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
+    RINGKASAN PERSETUJUAN
+  </h1>
 </div>
+            <hr class="border-gray-300">
+            
+            {{-- ## Dashboard Cards (Fokus pada Aksi Cepat) --}}
+            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                
+                {{-- Card 1: Perlu Persetujuan (Mendesak - Danger) --}}
+                <div data-filter="pending" class="action-card bg-card-danger text-white p-6 rounded-xl card-shadow-xl w-full card-hover-pop transition-all duration-300 cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-white/90 uppercase tracking-widest mb-1">PERLU TINDAK LANJUT</h3>
+                            <p class="text-5xl font-extrabold mt-1">3</p> 
+                            <span class="text-xs text-white/70">Permohonan menunggu review</span>
+                        </div>
+                        <div class="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-gavel text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-xs font-semibold uppercase py-2 rounded-full border border-white/50 hover:bg-white/20 transition duration-200">
+                        Klik untuk Tinjau <i class="fas fa-arrow-right ml-1"></i>
+                    </p>
+                </div>
 
-{{-- MODAL DETAIL --}}
-<div id="detailPengajuanModal" class="modal"> {{-- ID modal diubah ke Pengajuan --}}
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Detail Pengajuan Perbaikan</h5>
-            <span class="close-button" onclick="tutupModalPengajuan()">&times;</span> {{-- Fungsi tutup diubah --}}
-        </div>
-        <div class="modal-body" id="modal-body-content-pengajuan"> {{-- ID body modal diubah --}}
-            <div style="text-align:center;">
-                <p>Memuat detail pengajuan...</p>
+                {{-- Card 2: Peminjaman Aktif (Primary) --}}
+                <div data-filter="disetujui" class="action-card bg-card-primary text-white p-6 rounded-xl card-shadow-xl w-full card-hover-pop transition-all duration-300 cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-white/90 uppercase tracking-widest mb-1">PEMINJAMAN AKTIF</h3>
+                            <p class="text-5xl font-extrabold mt-1">60</p>
+                            <span class="text-xs text-white/70">Total aset sedang digunakan</span>
+                        </div>
+                        <div class="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-exchange-alt text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-xs font-semibold uppercase py-2 rounded-full border border-white/50 hover:bg-white/20 transition duration-200">
+                        Klik untuk Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                    </p>
+                </div>
+
+                {{-- Card 3: Keterlambatan Pengembalian (Warning) --}}
+                <div data-filter="terlambat" class="action-card bg-card-warning text-white p-6 rounded-xl card-shadow-xl w-full card-hover-pop transition-all duration-300 cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-white/90 uppercase tracking-widest mb-1">KETERLAMBATAN</h3>
+                            <p class="text-5xl font-extrabold mt-1">5</p>
+                            <span class="text-xs text-white/70">Aset yang *overdue*</span>
+                        </div>
+                        <div class="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-clock text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-xs font-semibold uppercase py-2 rounded-full border border-white/50 hover:bg-white/20 transition duration-200">
+                        Klik untuk Peringatan <i class="fas fa-arrow-right ml-1"></i>
+                    </p>
+                </div>
+
+                {{-- Card 4: Total Disetujui (Success) --}}
+                <div data-filter="disetujui-bulan-ini" class="action-card bg-card-success text-white p-6 rounded-xl card-shadow-xl w-full card-hover-pop transition-all duration-300 cursor-pointer">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-white/90 uppercase tracking-widest mb-1">DISETUJUI (BULAN INI)</h3>
+                            <p class="text-5xl font-extrabold mt-1">15</p>
+                            <span class="text-xs text-white/70">Permintaan berhasil disetujui</span>
+                        </div>
+                        <div class="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-thumbs-up text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-xs font-semibold uppercase py-2 rounded-full border border-white/50 hover:bg-white/20 transition duration-200">
+                        Klik untuk Histori <i class="fas fa-arrow-right ml-1"></i>
+                    </p>
+                </div>
             </div>
-        </div>
+
+            <hr class="border-gray-300">
+
+            {{-- ## Filter dan Pencarian Canggih --}}
+            <div class="bg-white p-6 rounded-xl card-shadow-xl">
+                <h2 class="text-xl font-extrabold text-gray-800 mb-5 flex items-center">
+                    <i class="fas fa-sliders-h text-blue-600 mr-2"></i> Pengaturan Tampilan & Pencarian
+                </h2>
+                
+                {{-- Search Bar --}}
+                <div class="relative w-full mb-6">
+                    <input type="text" id="search-input" placeholder="CARI BERDASARKAN NIP, NAMA PEMINJAM, NAMA ASET..."
+                            class="border-2 border-gray-300 rounded-xl px-5 py-3 text-base pl-14 w-full focus:ring-4 focus:ring-blue-200 focus:border-blue-600 transition duration-150 placeholder-gray-500 font-medium">
+                    <i class="fas fa-search w-5 h-5 text-gray-400 absolute left-5 top-1/2 transform -translate-y-1/2"></i>
+                </div>
+
+                {{-- Filter Group --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    {{-- Filter Status (Ditargetkan oleh Card) --}}
+                    <div>
+                        <label for="filter-status" class="block text-sm font-semibold text-gray-700 mb-2">Status Permohonan</label>
+                        <select id="filter-status" class="mt-1 block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 rounded-xl border-2 shadow-sm">
+                            <option value="">Semua Status</option>
+                            <option value="pending">Pending (Menunggu)</option>
+                            <option value="disetujui">Disetujui</option>
+                            <option value="ditolak">Ditolak</option>
+                            {{-- Catatan: Status 'terlambat' dan 'disetujui-bulan-ini' akan menjadi logic tambahan di JS/Backend --}}
+                        </select>
+                    </div>
+
+                    {{-- Filter Tanggal Mulai --}}
+                    <div>
+                        <label for="filter-start-date" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Mulai Peminjaman</label>
+                        <div class="flex items-center space-x-3">
+                            <input type="date" id="filter-start-date" class="mt-1 block w-full pl-4 pr-4 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 rounded-xl border-2 shadow-sm">
+                            <button type="button" id="reset-start-date" class="mt-1 flex-shrink-0 p-3 text-base bg-gray-200 rounded-xl hover:bg-gray-300 transition duration-150 text-gray-700" title="Reset Tanggal Mulai">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Filter Tanggal Selesai --}}
+                    <div>
+                        <label for="filter-end-date" class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Akhir Peminjaman</label>
+                        <div class="flex items-center space-x-3">
+                            <input type="date" id="filter-end-date" class="mt-1 block w-full pl-4 pr-4 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-600 focus:border-blue-600 rounded-xl border-2 shadow-sm">
+                            <button type="button" id="reset-end-date" class="mt-1 flex-shrink-0 p-3 text-base bg-gray-200 rounded-xl hover:bg-gray-300 transition duration-150 text-gray-700" title="Reset Tanggal Akhir">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr class="border-gray-300">
+
+            {{-- ## Tabel Permohonan Peminjaman Aset --}}
+            <div class="bg-white rounded-xl card-shadow-xl overflow-hidden" id="permohonan-table-section">
+                <div class="bg-card-success">
+                    <h2 class="text-xl md:text-2xl font-extrabold text-white py-5 px-6 text-center tracking-wider">
+                        DAFTAR PERMOHONAN ASET BARU <i class="fas fa-list-alt ml-2"></i>
+                    </h2>
+                </div>
+                
+                {{-- Kontainer Tabel yang Dapat Di-scroll Horizontal --}}
+                <div class="overflow-x-auto max-h-96">
+                    <table class="min-w-full table-auto" id="permohonan-table">
+                        <thead>
+                            <tr class="text-gray-700 bg-gray-200 border-b-2 border-gray-300 uppercase text-xs tracking-wider">
+                                <th class="sticky-col header px-4 py-3 text-center font-bold whitespace-nowrap border-r border-gray-300">NO</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Tanggal Peminjaman</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">NIP</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Nama Peminjam</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Nama Aset</th>
+                                <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Unit</th>
+                                <th class="px-4 py-3 text-center font-bold whitespace-nowrap">Jumlah</th>
+                                <th class="px-4 py-3 text-center font-bold whitespace-nowrap">Status</th>
+                                <th class="sticky-action header px-4 py-3 text-center font-bold whitespace-nowrap border-l border-gray-300">TINDAK LANJUT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {{-- Row 1: Disetujui (Ganjil) --}}                            
+                            <tr class="bg-odd-row hover:bg-blue-50 transition duration-150" data-status-val="disetujui" data-date="2025-09-14">
+                                <td class="sticky-col px-4 py-4 border-b border-gray-200 text-sm text-center font-medium text-gray-600 border-r border-gray-200">1</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700">14/09/2025</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="nip">123456789</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap font-semibold text-gray-800" data-col="nama">Andi Purnomo</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="aset">Laptop ASUS ROG</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="unit">IT Dept.</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center text-gray-700">1</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center whitespace-nowrap">
+                                    <span class="inline-block px-4 py-1 text-xs font-bold text-white bg-green-600 rounded-full shadow-lg">
+                                        Disetujui
+                                    </span>
+                                </td>
+                                <td class="sticky-action px-4 py-4 border-b border-gray-200 text-sm text-center border-l border-gray-200">
+                                    <a href="#" class="inline-block bg-blue-600 rounded-full px-3 py-1 text-white text-xs font-semibold hover:bg-blue-700 transition duration-150 shadow-md">
+                                        <i class="fas fa-info-circle mr-1"></i> Detail
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            {{-- Row 2: Pending (Genap) - Target Utama Pimpinan --}}
+                            <tr class="bg-even-row hover:bg-blue-50 transition duration-150" data-status-val="pending" data-date="2025-09-20">
+                                <td class="sticky-col px-4 py-4 border-b border-gray-200 text-sm text-center font-medium text-gray-600 border-r border-gray-200">2</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700">20/09/2025</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="nip">987654321</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap font-semibold text-gray-800" data-col="nama">Budi Santoso</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="aset">Proyektor EPSON</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="unit">HRD</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center text-gray-700">1</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center whitespace-nowrap">
+                                    <span class="inline-block px-4 py-1 text-xs font-bold text-white bg-red-600 rounded-full shadow-lg animate-pulse">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td class="sticky-action px-4 py-4 border-b border-gray-200 text-sm text-center border-l border-gray-200">
+                                    <a href="#" class="inline-block bg-red-600 rounded-full px-3 py-1 text-white text-xs font-semibold hover:bg-red-700 transition duration-150 shadow-md">
+                                        <i class="fas fa-file-signature mr-1"></i> Tindak Lanjut
+                                    </a>
+                                </td>
+                            </tr>
+
+                            {{-- Row 3: Ditolak (Ganjil) --}}
+                            <tr class="bg-odd-row hover:bg-blue-50 transition duration-150" data-status-val="ditolak" data-date="2025-09-22">
+                                <td class="sticky-col px-4 py-4 border-b border-gray-200 text-sm text-center font-medium text-gray-600 border-r border-gray-200">3</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700">22/09/2025</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="nip">555444333</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap font-semibold text-gray-800" data-col="nama">Citra Dewi</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="aset">Kamera DSLR</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm whitespace-nowrap text-gray-700" data-col="unit">Marketing</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center text-gray-700" data-col="jumlah">2</td>
+                                <td class="px-4 py-4 border-b border-gray-200 text-sm text-center whitespace-nowrap">
+                                    <span class="inline-block px-4 py-1 text-xs font-bold text-white bg-gray-500 rounded-full shadow-lg">
+                                        Ditolak
+                                    </span>
+                                </td>
+                                <td class="sticky-action px-4 py-4 border-b border-gray-200 text-sm text-center border-l border-gray-200">
+                                    <a href="#" class="inline-block bg-gray-400 rounded-full px-3 py-1 text-white text-xs font-semibold cursor-not-allowed transition duration-150 shadow-md">
+                                        <i class="fas fa-times-circle mr-1"></i> Detail
+                                    </a>
+                                </td>
+                            </tr>
+
+                            {{-- Tambahkan baris data dummy lainnya di sini dengan atribut data-status-val dan data-date --}}
+                            {{-- ... --}}
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center text-gray-600 text-sm py-4 bg-gray-50 border-t border-gray-200">
+                    <span id="display-row-count">Menampilkan 3 dari 3 Permohonan Baru.</span>
+                </div>
+            </div>
+        </main>
     </div>
-</div>
 
-<script>
-    const mainCardPengajuan = document.getElementById('mainPengajuanCard');
+    {{-- Script untuk Fungsionalitas Filter dan Card Click --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            const statusFilter = document.getElementById('filter-status');
+            const startDateInput = document.getElementById('filter-start-date');
+            const endDateInput = document.getElementById('filter-end-date');
+            const tableBody = document.querySelector('#permohonan-table tbody');
+            // Ambil semua TR KECUALI yang merupakan dummy, jika ada. Di sini kita asumsikan semua TR adalah data.
+            const tableRows = Array.from(tableBody.querySelectorAll('tr')); 
+            const displayCountElement = document.getElementById('display-row-count');
+            const actionCards = document.querySelectorAll('.action-card');
 
-    if (!mainCardPengajuan) {
-        console.error("Kesalahan JavaScript: Elemen 'mainPengajuanCard' tidak ditemukan.");
-    }
+            // --- DEBOUNCE FUNCTION ---
+            function debounce(func, delay) {
+                let timeout;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+            // -------------------------
 
-    const baseUrlPengajuan = mainCardPengajuan ? mainCardPengajuan.getAttribute('data-detail-url') : null;
-
-    function tampilkanDetailPengajuan(element) {
-        const id = element.getAttribute('data-id');
-        const modalBody = document.getElementById('modal-body-content-pengajuan');
-        const detailModal = document.getElementById('detailPengajuanModal');
-
-        if (!baseUrlPengajuan) {
-            console.error("Kesalahan: Base URL route tidak ditemukan. Pastikan 'pemeliharaan.detail_perbaikan' terdaftar di web.php.");
-            modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
-                                    Kesalahan Konfigurasi Route. Cek Console Log.
-                                  </p>`;
-            detailModal.style.display = 'block';
-            return;
-        }
-
-        // Tampilkan loading dan Modal
-        modalBody.innerHTML = '<div style="text-align:center; padding: 50px;"><p style="margin-top: 10px;">Memuat data...</p></div>';
-        detailModal.style.display = 'block';
-
-        const detailUrl = baseUrlPengajuan.replace('TEMP_ID', id);
-
-        fetch(detailUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Gagal mengambil data detail. Status: ${response.status}.`);
+            /**
+             * Mengkonversi tanggal DD/MM/YYYY menjadi format YYYY-MM-DD untuk Date object.
+             * @param {string} dateString - Tanggal dalam format DD/MM/YYYY
+             * @returns {Date} - Objek Tanggal
+             */
+            function parseDate(dateString) {
+                const parts = dateString.split('/');
+                if (parts.length === 3) {
+                    // new Date(Year, Month - 1, Day)
+                    // Menggunakan YYYY-MM-DD dari atribut data-date jika ada, jika tidak, pakai teks sel.
+                    const yyyymmdd = parts[2] + '-' + parts[1] + '-' + parts[0];
+                    return new Date(yyyymmdd); 
                 }
-                return response.text();
-            })
-            .then(html => {
-                modalBody.innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error AJAX:', error.message);
-                modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
-                                        ${error.message} <br> Kesalahan terjadi di sisi server.
-                                      </p>`;
+                return null;
+            }
+
+            /**
+             * Fungsi Utama untuk Melakukan Filter
+             */
+            function applyFilters() {
+                const searchKeyword = searchInput.value.toLowerCase().trim();
+                const selectedStatus = statusFilter.value;
+                
+                const filterStartDate = startDateInput.value ? new Date(startDateInput.value) : null;
+                const filterEndDate = endDateInput.value ? new Date(endDateInput.value) : null;
+                
+                // UX: Validation
+                if (filterStartDate && filterEndDate && filterEndDate < filterStartDate) {
+                    alert('Tanggal Akhir tidak boleh lebih awal dari Tanggal Mulai.');
+                    endDateInput.value = '';
+                    // Rerun filter setelah reset
+                    applyFilters(); 
+                    return;
+                }
+
+                if (filterStartDate) filterStartDate.setHours(0, 0, 0, 0);
+                if (filterEndDate) filterEndDate.setHours(0, 0, 0, 0);
+
+
+                let visibleRowCount = 0;
+
+                tableRows.forEach(row => {
+                    let isVisible = true;
+                    
+                    // 1. Filter Pencarian Teks (NIP, Nama, Aset)
+                    if (searchKeyword) {
+                        // Ambil data-col yang relevan untuk pencarian: nama, nip, aset
+                        const nip = row.querySelector('[data-col="nip"]')?.textContent.toLowerCase() || '';
+                        const nama = row.querySelector('[data-col="nama"]')?.textContent.toLowerCase() || '';
+                        const aset = row.querySelector('[data-col="aset"]')?.textContent.toLowerCase() || '';
+                        const unit = row.querySelector('[data-col="unit"]')?.textContent.toLowerCase() || '';
+
+                        if (!nip.includes(searchKeyword) && !nama.includes(searchKeyword) && !aset.includes(searchKeyword) && !unit.includes(searchKeyword)) {
+                            isVisible = false;
+                        }
+                    }
+                    
+                    // 2. Filter Status
+                    if (isVisible && selectedStatus) {
+                        const currentRowStatus = row.getAttribute('data-status-val');
+                        
+                        if (selectedStatus === 'pending' && currentRowStatus !== 'pending') {
+                            isVisible = false;
+                        } else if (selectedStatus === 'disetujui' && currentRowStatus !== 'disetujui') {
+                            isVisible = false;
+                        } else if (selectedStatus === 'ditolak' && currentRowStatus !== 'ditolak') {
+                            isVisible = false;
+                        }
+                        // Catatan: 'terlambat' dan 'disetujui-bulan-ini' memerlukan backend logic atau data-attribute tambahan.
+                    }
+
+                    // 3. Filter Tanggal
+                    if (isVisible && (filterStartDate || filterEndDate)) {
+                        const rowDateAttribute = row.getAttribute('data-date'); // Format YYYY-MM-DD
+                        let rowDate = null;
+
+                        if (rowDateAttribute) {
+                            rowDate = new Date(rowDateAttribute);
+                            rowDate.setHours(0, 0, 0, 0); 
+                        } else {
+                            // Fallback (jika data-date tidak tersedia, gunakan teks sel dan parse)
+                            const dateCell = row.children[1];
+                            const rowDateString = dateCell.textContent.trim();
+                            rowDate = parseDate(rowDateString);
+                            if (rowDate) rowDate.setHours(0, 0, 0, 0);
+                        }
+                        
+                        if (rowDate) {
+                            if (filterStartDate && rowDate < filterStartDate) {
+                                isVisible = false;
+                            }
+                            if (filterEndDate && rowDate > filterEndDate) {
+                                isVisible = false;
+                            }
+                        } else {
+                            // Jika parsing gagal, sembunyikan (agar data tidak valid tidak ditampilkan)
+                            isVisible = false; 
+                        }
+                    }
+
+                    // Tampilkan atau sembunyikan baris
+                    row.style.display = isVisible ? '' : 'none';
+                    if (isVisible) {
+                        visibleRowCount++;
+                    }
+                });
+                
+                // Perbarui teks jumlah baris yang ditampilkan
+                displayCountElement.textContent = 
+                    `Menampilkan ${visibleRowCount} dari ${tableRows.length} Permohonan Baru.`;
+            }
+
+            // --- Menghubungkan Event Listeners ---
+            
+            // 1. Filter Cepat dari Card Ringkasan
+            actionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    if (filterValue === 'pending' || filterValue === 'disetujui' || filterValue === 'ditolak') {
+                        // Reset filter lain (opsional, agar fokus pada status)
+                        searchInput.value = '';
+                        startDateInput.value = '';
+                        endDateInput.value = '';
+                        
+                        // Set filter status dan terapkan
+                        statusFilter.value = filterValue;
+                        applyFilters();
+                        
+                        // Scroll ke tabel
+                        document.getElementById('permohonan-table-section').scrollIntoView({ behavior: 'smooth' });
+                        
+                    } else if (filterValue === 'terlambat') {
+                        // Di sini akan diarahkan ke halaman/filter 'terlambat' yang sesungguhnya (membutuhkan data atribut yang kompleks/backend)
+                        alert("Ini akan memfilter semua yang statusnya 'Aktif' tapi Tgl Kembali <= Hari Ini. (Membutuhkan logic backend atau data kolom Tgl Kembali)");
+                        // Untuk demo, kita reset filter status
+                        statusFilter.value = '';
+                        applyFilters();
+
+                    } else if (filterValue === 'disetujui-bulan-ini') {
+                        // Di sini akan diarahkan ke halaman/filter 'disetujui' dengan range Tgl Peminjaman Bulan Ini
+                        alert("Ini akan memfilter semua yang statusnya 'Disetujui' dan Tgl Peminjaman di Bulan Ini. (Membutuhkan logic tanggal yang dinamis)");
+                        // Untuk demo, kita set filter status disetujui
+                        statusFilter.value = 'disetujui';
+                        applyFilters();
+                    }
+                });
             });
-    }
 
-    function tutupModalPengajuan() {
-        document.getElementById('detailPengajuanModal').style.display = 'none';
-    }
+            // 2. Event Input dan Selector
+            searchInput.addEventListener('keyup', debounce(applyFilters, 400));
+            statusFilter.addEventListener('change', applyFilters);
+            startDateInput.addEventListener('change', applyFilters);
+            endDateInput.addEventListener('change', applyFilters);
 
-    // Mengganti listener window.onclick agar hanya menutup modal pengajuan ini
-    window.onclick = function(event) {
-        const modal = document.getElementById('detailPengajuanModal');
-        if (event.target == modal) {
-            tutupModalPengajuan();
-        }
-    }
-</script>
+            // 3. Tombol Reset Tanggal
+            document.getElementById('reset-start-date').addEventListener('click', function() {
+                startDateInput.value = '';
+                applyFilters();
+            });
+            document.getElementById('reset-end-date').addEventListener('click', function() {
+                endDateInput.value = '';
+                applyFilters();
+            });
+
+            // Panggil filter awal
+            applyFilters(); 
+        });
+    </script>
+</body>
+</html>
 @endsection

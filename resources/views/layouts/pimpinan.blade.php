@@ -33,6 +33,20 @@
             z-index: 1000;
             flex-shrink: 0;
         }
+        /* Tambahkan ini ke bagian CSS kamu */
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    left: 0; /* biarkan 0 supaya translateX bekerja */
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+}
+
 
 
         /* --- Header Sidebar & Menu Utama Styling --- */
@@ -55,13 +69,13 @@
             margin-right: 20px;
         }
 
-        .sidebar .sidebar-header-custom .pimpinan-info h3 {
+        .sidebar .sidebar-header-custom .admin-info h3 {
             margin: 0;
             font-size: 0.9rem;
             font-weight: 600;
         }
 
-        .sidebar .sidebar-header-custom .pimpinan-info p {
+        .sidebar .sidebar-header-custom .admin-info p {
             margin: 0;
             font-size: 0.8rem;
             color: #b0c4de;
@@ -348,7 +362,6 @@
             }
 
             .sidebar {
-                left: -250px;
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
@@ -411,7 +424,7 @@
                     <!-- Placeholder untuk Logo, ganti dengan gambar Anda -->
                     <img src="lldikti-logo.png" alt="Logo">
                 </div>
-                <div class="pimpinan-info">
+                <div class="admin-info">
                     <h3>Pimpinan</h3>
                     <p>Panel</p>
                 </div>
@@ -419,10 +432,16 @@
 
             <div class="menu-header">MENU UTAMA</div>
             <ul class="menu">
+                <li class="menu-item">
+                    <a href="{{ route('dashboardpimpinan') }}" class="menu-link {{ Request::routeIs('dashboardpimpinan') ? 'active' : '' }}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
 
                 <li class="menu-item">
-                    <a href="#"
-                        class="#">
+                    <a href="{{ route('peminjamanpimpinan') }}"
+                        class="menu-link {{ Request::routeIs('peminjamanpimpinan') ? 'active' : '' }}">
                         <i class="fas fa-handshake"></i> Peminjaman Aset
                     </a>
                 </li>
@@ -438,33 +457,29 @@
                         id="pemeliharaan-menu">
 
                         <li class="menu-item">
-                            <a href="#"
-                                class="#">
+                            <a href="{{ route('perbaikanpimpinan') }}"
+                                class="menu-link {{ Request::routeIs('perbaikanpimpinan') ? 'active' : '' }}">
                                 <i class="fas fa-wrench"></i> Pengajuan Perbaikan
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#"
-                                class="#">
+                            <a href="{{ route('sparepartpimpinan') }}"
+                                class="menu-link {{ Request::routeIs('sparepartpimpinan') ? 'active' : '' }}">
                                 <i class="fas fa-cart-plus"></i> Pembelian Sparepart
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                     <a href="{{ route('laporanpimpinan') }}"
+                                class="menu-link {{ Request::routeIs('laporanpimpinan') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ route('dashboardpimpinan') }}" class="menu-link">
-                        <i class="fas fa-file-alt"></i> Pimpinan
                     </a>
                 </li>
                 <!-- Added separator and moved logout below reports -->
                 <li class="menu-separator"></li>
                 <li class="menu-item">
-                    <a href="#" class="logout-link">
+                    <a href="login" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Log Out
                     </a>
                 </li>
