@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PengajuanPerbaikan;
 use App\Models\PerbaikanPegawai;
-use App\Models\User; // Ditambahkan untuk memastikan Model User terdeteksi
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 class FormPerbaikanController extends Controller
 {
@@ -19,59 +18,61 @@ class FormPerbaikanController extends Controller
     }
 
     /**
-     * Simpan pengajuan perbaikan yang baru ke database.
+     * Simpan pengajuan perbaikan dari pegawai, lalu kirim ke admin.
      */
     public function store(Request $request)
     {
-        // 1. Validasi Data
-        // Validasi ini HARUS lolos. Jika ada yang kosong, data tidak akan disimpan.
-        $validatedData = $request->validate([
-            'tanggal_pengajuan' => 'required|date',
-            'jenis_kerusakan' => 'required|string|max:255',
-            'nama_barang' => 'required|string|max:255',
-            'kode_barang' => 'required|string|max:255',
-            'jenis_barang' => 'required|string|max:255',
+        $validated = $request->validate([
+            'tanggal_pengajuan'   => 'required|date',
+            'jenis_kerusakan'     => 'required|string|max:255',
+            'nama_barang'         => 'required|string|max:255',
+            'kode_barang'         => 'required|string|max:255',
+            'jenis_barang'        => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'foto_kerusakan' => 'nullable|image|max:2048', 
+            'foto_kerusakan'      => 'nullable|image|max:2048',
         ]);
 
         try {
-            // 2. Proses Upload Foto (jika ada)
+            // Upload foto jika ada
             $fotoPath = null;
             if ($request->hasFile('foto_kerusakan')) {
-                // Simpan foto di folder 'public/kerusakan'
                 $fotoPath = $request->file('foto_kerusakan')->store('kerusakan', 'public');
             }
 
-            // 3. Persiapkan Data yang Akan Disimpan
-            $dataToStore = $validatedData;
+            // ✅ Simpan ke tabel perbaikan_pegawai
+            $pegawaiForm = PerbaikanPegawai::create([
+                'user_id'             => auth()->id(),
+                'tanggal_pengajuan'   => $validated['tanggal_pengajuan'],
+                'jenis_kerusakan'     => $validated['jenis_kerusakan'],
+                'nama_barang'         => $validated['nama_barang'],
+                'kode_barang'         => $validated['kode_barang'],
+                'jenis_barang'        => $validated['jenis_barang'],
+                'keterangan_tambahan' => $validated['keterangan_tambahan'] ?? null,
+                'foto_kerusakan'      => $fotoPath,
+                'status'              => 'Dipending',
+            ]);
 
-            // Tambahkan USER ID HANYA JIKA USER SUDAH LOGIN
-            // Ini mencegah error jika kolom 'user_id' diset NOT NULL
-            if (auth()->check()) {
-                $dataToStore['user_id'] = auth()->id();
-            } else {
-                // Jika user tidak login dan 'user_id' di database NOT NULL,
-                // proses ini akan GAGAL. Solusi terbaik adalah menghapus
-                // 'user_id' dari $fillable Model Anda.
-            }
-            
-            // Tambahkan data non-form
-            $dataToStore['foto_kerusakan'] = $fotoPath;
-            $dataToStore['status'] = 'Pending'; // Nilai default 
-            
-            // 4. Simpan ke Database
-            PerbaikanPegawai::create($dataToStore);
+            // ✅ Simpan ke tabel pengajuan_perbaikan (admin)
+            PengajuanPerbaikan::create([
+                'user_id'             => auth()->id(),
+                'asset_id'            => null,
+                'kode_barang'         => $pegawaiForm->kode_barang,
+                'nama_barang'         => $pegawaiForm->nama_barang,
+                'jenis_barang'        => $pegawaiForm->jenis_barang, // ⬅ tambahkan ini agar sesuai form
+                'jenis_kerusakan'     => $pegawaiForm->jenis_kerusakan,
+                'keterangan_tambahan' => $pegawaiForm->keterangan_tambahan,
+                'foto_kerusakan_path' => $fotoPath,
+                'tgl_pengajuan'       => $pegawaiForm->tanggal_pengajuan,
+                'status'              => 'Dipending',
+            ]);
 
-            // 5. Berhasil dan Redirect
-            return redirect()->route('dashboard.pegawai')->with('success', 'Pengajuan perbaikan berhasil disimpan.');
+            return redirect()->route('dashboard.pegawai')
+                ->with('success', 'Pengajuan perbaikan berhasil dikirim ke admin.');
 
         } catch (\Exception $e) {
-            // 6. Gagal dan Catat Error
             Log::error('Gagal menyimpan pengajuan perbaikan: ' . $e->getMessage());
-            
-            // Tampilkan error yang lebih jelas di form
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Pastikan semua kolom terisi. Error: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 }

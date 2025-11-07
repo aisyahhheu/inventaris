@@ -1,36 +1,38 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class PengajuanPerbaikan extends Model
+return new class extends Migration
 {
-    use HasFactory;
-
-    // Nama tabel di database
-    protected $table = 'pengajuan_perbaikan';
-
-    // Kolom-kolom yang boleh diisi secara massal (mass assignable)
-    protected $fillable = [
-        'user_id',             // ID user (pegawai) yang mengajukan
-        'asset_id',            // ID aset yang diajukan
-        'kode_barang',         
-        'nama_barang',         
-        'jenis_kerusakan',     // Contoh: Patah, Mati Total
-        'keterangan_tambahan', 
-        'foto_kerusakan_path', // Lokasi file foto kerusakan
-        'tgl_pengajuan',       // Tanggal pengajuan
-        'status',              // Status persetujuan
-    ];
+    /**
+     * Jalankan migration untuk membuat tabel pengajuan_perbaikan.
+     */
+    public function up(): void
+    {
+        Schema::create('pengajuan_perbaikan', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // relasi ke tabel users
+            $table->unsignedBigInteger('asset_id')->nullable(); // relasi opsional ke tabel asset
+            $table->string('kode_barang');
+            $table->string('nama_barang');
+            $table->string('jenis_barang')->nullable();
+            $table->string('jenis_kerusakan');
+            $table->text('keterangan_tambahan')->nullable();
+            $table->string('foto_kerusakan_path')->nullable(); // path foto
+            $table->date('tgl_pengajuan');
+            $table->string('status')->default('Pending');
+            $table->timestamps();
+        });
+    }
 
     /**
-     * Set tipe data untuk kolom tanggal_pengajuan sebagai date
+     * Undo migration (hapus tabel jika di-rollback).
      */
-    protected $casts = [
-        'tgl_pengajuan' => 'date',
-    ];
-    
-    // Di sini Anda bisa menambahkan fungsi relasi seperti asset() atau user()
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('pengajuan_perbaikan');
+    }
+};
+

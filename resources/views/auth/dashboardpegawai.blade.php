@@ -14,7 +14,7 @@
     <div class="card-container">
         <div class="card blue-card">
             <h3>Perbaikan</h3>
-            <a href="{{ route('form.perbaikan') }}" class="btn-ajukan">Ajukan</a>
+            <a href="{{ route('form.perbaikan.create') }}" class="btn-ajukan">Ajukan</a>
             <i class="icon fas fa-cogs"></i>
         </div>
         <div class="card orange-card">

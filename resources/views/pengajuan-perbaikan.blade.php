@@ -293,54 +293,64 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kode Aset</th>
-                        <th>Nama Aset</th>
-                        <th>Diajukan Oleh</th>
-                        <th>Tanggal Pengajuan</th>
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Jenis Barang</th>
                         <th>Jenis Kerusakan</th>
+                        <th>Keterangan Tambahan</th>
+                        <th>Foto Kerusakan</th>
+                        <th>Tanggal Pengajuan</th>
                         <th>Status</th>
+                        <th>Diajukan Oleh</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @php $no = 1; @endphp
-                    {{-- PASTIKAN variabel dari controller adalah $pengajuan --}}
                     @forelse ($pengajuan as $data)
                     @php
-                    $status = $data->status ?? 'Menunggu';
-                    // Class disesuaikan untuk status perbaikan
+                    $status = $data->status ?? 'Dipending';
                     $statusClass = 'status-' . strtolower(str_replace(' ', '', $status));
                     $tglPengajuan = $data->tgl_pengajuan ? \Carbon\Carbon::parse($data->tgl_pengajuan)->format('d/m/Y') : '-';
                     @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{ $data->kode_aset ?? '-' }}</td>
-                        <td>{{ $data->nama_aset ?? '-' }}</td>
-                        <td>{{ $data->nama_pegawai ?? '-' }}</td>
-                        <td>{{ $tglPengajuan }}</td>
+                        <td>{{ $data->kode_barang ?? '-' }}</td>
+                        <td>{{ $data->nama_barang ?? '-' }}</td>
+                        <td>{{ $data->jenis_barang ?? '-' }}</td>
                         <td>{{ $data->jenis_kerusakan ?? '-' }}</td>
-                        <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
+                        <td>{{ $data->keterangan_tambahan ?? '-' }}</td>
                         <td>
-                            @if(isset($data->id))
+                            @if ($data->foto_kerusakan_path)
+                            <a href="{{ asset('storage/' . $data->foto_kerusakan_path) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $data->foto_kerusakan_path) }}" alt="Foto" width="70" style="border-radius:5px;">
+                            </a>
+                            @else
+                            <span>Tidak ada</span>
+                            @endif
+                        </td>
+                        <td>{{ $tglPengajuan }}</td>
+                        <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
+                        <td>{{ $data->user->name ?? 'Pegawai Tidak Ditemukan' }}</td>
+                        <td>
                             <button
                                 class="btn-detail"
                                 data-id="{{ $data->id }}"
-                                onclick="tampilkanDetailPengajuan(this)"> {{-- Fungsi diubah ke tampilkanDetailPengajuan --}}
+                                onclick="tampilkanDetailPengajuan(this)">
                                 Lihat Detail
                             </button>
-                            @else
-                            <button class="btn-detail" disabled>Error ID</button>
-                            @endif
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 20px; color: #6c757d;">
+                        <td colspan="11" style="text-align:center; padding:20px; color:#6c757d;">
                             Tidak ada pengajuan perbaikan yang ditemukan.
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
+
             </table>
         </div>
     </div>

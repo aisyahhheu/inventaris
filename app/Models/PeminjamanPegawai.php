@@ -10,7 +10,6 @@ class PeminjamanPegawai extends Model
     use HasFactory;
 
     protected $table = 'form_peminjaman';
-
     protected $fillable = [
         'user_id',
         'nama_pegawai',
@@ -20,6 +19,6 @@ class PeminjamanPegawai extends Model
         'jumlah',
         'tanggal_pinjam',
         'tanggal_kembali',
-        'status',
+        'status'
     ];
 }

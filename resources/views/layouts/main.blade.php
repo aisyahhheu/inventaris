@@ -409,11 +409,12 @@
             <div class="sidebar-header-custom">
                 <div class="logo-container">
                     <!-- Placeholder untuk Logo, ganti dengan gambar Anda -->
-                    <img src="lldikti-logo.png" alt="Logo">
+                    <img src="{{ asset('lldikti-logo.png') }}" alt="Logo" style="height: 60px;">
+
                 </div>
                 <div class="admin-info">
-                    <h3>Admin</h3>
-                    <p>Panel</p>
+                    <h3>Manajemen</h3>
+                    <h3>Inventaris</h3>
                 </div>
             </div>
 
@@ -462,20 +463,20 @@
                         <i class="fas fa-handshake"></i> Peminjaman Aset
                     </a>
                 </li>
-                <li class="menu-item dropdown {{ Request::routeIs(['pengajuanperbaikan','pembeliansparepart']) ? 'active' : '' }}">
+                <li class="menu-item dropdown {{ Request::routeIs(['pengajuan-perbaikan','pembeliansparepart']) ? 'active' : '' }}">
                     <a class="menu-link dropdown-toggle" href="#" role="button" data-dropdown-id="pemeliharaan-menu">
                         <i class="fas fa-tools"></i> Pemeliharaan Aset
                         <i class="fas fa-chevron-down ms-2
-                         {{ Request::routeIs(['pengajuanperbaikan','pembeliansparepart']) ? 'rotate-icon' : '' }}">
+                         {{ Request::routeIs(['pengajuan-perbaikan','pembeliansparepart']) ? 'rotate-icon' : '' }}">
                         </i>
                     </a>
 
-                    <ul class="dropdown-menu {{ Request::routeIs(['pengajuanperbaikan','pembeliansparepart']) ? 'show' : '' }}"
+                    <ul class="dropdown-menu {{ Request::routeIs(['pengajuan-perbaikan','pembeliansparepart']) ? 'show' : '' }}"
                         id="pemeliharaan-menu">
 
                         <li class="menu-item">
-                            <a href="{{ route('pengajuanperbaikan') }}"
-                                class="menu-link {{ Request::routeIs('pengajuanperbaikan') ? 'active' : '' }}">
+                            <a href="{{ route('perbaikan.index') }}"
+                                class="menu-link {{ Request::routeIs('perbaikan.index') ? 'active' : '' }}">
                                 <i class="fas fa-wrench"></i> Pengajuan Perbaikan
                             </a>
                         </li>
@@ -488,21 +489,21 @@
                     </ul>
                 </li>
                 <li class="menu-item">
-                     <a href="{{ route('laporanadmin') }}"
-                                class="menu-link {{ Request::routeIs('laporanadmin') ? 'active' : '' }}">
+                    <a href="{{ route('laporanadmin') }}"
+                        class="menu-link {{ Request::routeIs('laporanadmin') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
                 </li>
                 <!-- Added separator and moved logout below reports -->
                 <li class="menu-separator"></li>
                 <li class="menu-item">
-                    <a href="login" class="logout-link">
+                    <a href="/login" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Log Out
                     </a>
+
                 </li>
             </ul>
         </div>
-        <!-- Removed logout from bottom section since it's now in the menu -->
     </div>
 
     <div class="main-content-wrapper-shifted">

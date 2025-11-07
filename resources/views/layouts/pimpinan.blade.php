@@ -14,8 +14,10 @@
             background-color: #f0f2f5;
             margin: 0;
             display: flex;
+            overflow-x: hidden;
         }
 
+        /* 🔹 SIDEBAR UTAMA */
         .sidebar {
             width: 250px;
             min-width: 250px;
@@ -32,10 +34,17 @@
             overflow-y: auto;
             z-index: 1000;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
+        /* 🔹 Saat sidebar disembunyikan di desktop */
+        .sidebar.hidden {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-        /* --- Header Sidebar & Menu Utama Styling --- */
+        /* --- HEADER SIDEBAR --- */
         .sidebar .sidebar-header-custom {
             display: flex;
             align-items: center;
@@ -88,11 +97,9 @@
 
         .sidebar .menu-item {
             margin-bottom: 5px;
-            /* Ensure natural document flow */
-            position: relative;
         }
 
-        /* --- Link Menu Umum --- */
+        /* --- LINK MENU --- */
         .sidebar .menu-link {
             display: flex;
             align-items: center;
@@ -116,15 +123,13 @@
             font-weight: 600;
         }
 
-        /* --- Styling untuk Indikator Menu Aktif (Sesuai Screenshot) --- */
         .sidebar .menu-link.active {
-            position: relative;
             background-color: #4a73df;
             color: #fff;
             font-weight: 600;
+            position: relative;
         }
 
-        /* Garis putih di kiri menu aktif */
         .sidebar .menu-link.active::before {
             content: '';
             position: absolute;
@@ -136,7 +141,7 @@
             border-bottom-left-radius: 8px;
         }
 
-        /* --- Dropdown Menu Styling --- */
+        /* --- DROPDOWN MENU --- */
         .sidebar .dropdown-toggle {
             cursor: pointer;
             display: flex;
@@ -144,106 +149,29 @@
             align-items: center;
         }
 
-        /* Style untuk link dropdown parent */
-        .sidebar .menu-item.dropdown .menu-link {
-            padding-right: 15px;
-        }
-
-        /* Saat menu induk sedang aktif, berikan style yang sama seperti menu lainnya */
-        .sidebar .menu-item.dropdown.active>.menu-link {
-            background-color: #4a73df;
-            color: #fff;
-            font-weight: 600;
-        }
-
-
-        /* Dropdown Menu */
         .sidebar .dropdown-menu {
             list-style: none;
             padding-left: 0;
             margin: 0;
             display: none;
-            /* default hidden */
             background-color: #0d1e37;
-        }
-
-        .sidebar .dropdown-menu {
-            position: static !important;
         }
 
         .sidebar .dropdown-menu.show {
             display: block;
-            /* saat aktif, tampil dan otomatis mendorong menu di bawah */
         }
 
-        .sidebar .dropdown-menu .menu-item {
-            margin: 0;
-        }
-
-        /* Style untuk link submenu */
         .sidebar .dropdown-menu .menu-link {
             padding-left: 30px;
-            /* Indentasi submenu */
             font-size: 0.8rem;
             color: #b0c4de;
         }
 
-        /* Style saat link submenu dihover */
         .sidebar .dropdown-menu .menu-link:hover {
-            background-color: transparent;
             color: #fff;
         }
 
-        /* Styling untuk submenu yang aktif seperti di screenshot */
-        .sidebar .dropdown-menu .menu-link.active {
-            position: relative;
-            background-color: transparent;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .sidebar .dropdown-menu .menu-link.active {
-            position: relative;
-            background-color: #4a73df;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 6px;
-            padding: 8px 16px;
-            margin-top: 6px;
-            margin-left: 20px;
-            margin-right: 20px;
-        }
-
-
-        /* Penanda aktif untuk submenu (titik kecil) */
-        .sidebar .dropdown-menu .menu-link.active::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            /* Sesuaikan posisi agar pas dengan indentasi */
-            top: 50%;
-            transform: translateY(-50%);
-            width: 5px;
-            height: 5px;
-            background-color: #fff;
-            border-radius: 50%;
-        }
-
-        /* Added separator styling for logout section */
-        .sidebar .menu-separator {
-            display: flex;
-            align-items: center;
-            padding: 0 0 20px 0;
-            border-bottom: 1px solid #3e495d;
-            margin-bottom: 5px;
-            margin-left: -20px;
-            margin-right: -20px;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-
-        /* --- Link Logout --- */
+        /* --- LOGOUT LINK --- */
         .sidebar .logout-link {
             display: flex;
             align-items: center;
@@ -252,163 +180,99 @@
             text-decoration: none;
             font-size: 0.9rem;
             border-radius: 8px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            width: 100%;
             transition: background-color 0.3s, color 0.3s;
             margin-top: 10px;
         }
 
-        .sidebar .logout-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-
         .sidebar .logout-link:hover {
             background-color: #1a2a44;
-            color: #dc3545;
         }
 
-
-        /* Scrollbar tipis sidebar */
-        .sidebar::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 10px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
-        }
-
-
-        /* --- Konten Utama & Responsif --- */
+        /* --- KONTEN UTAMA --- */
         .main-content-wrapper-shifted {
             margin-left: 250px;
             flex-grow: 1;
+            transition: margin-left 0.3s ease;
         }
 
-        .top-navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            width: 100%;
+        /* 🔹 Kalau sidebar disembunyikan */
+        .main-content-wrapper-shifted.full {
+            margin-left: 0;
         }
 
-        .main-content-wrapper {
-            padding: 20px;
-            flex-grow: 1;
-        }
+.top-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+}
 
-        .top-navbar .welcome {
-            font-weight: 600;
-            color: #333;
-        }
+.top-navbar .right-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-        .top-navbar .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.top-navbar .menu-toggle {
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: #4a73df;
+    transition: color 0.3s;
+}
 
-        .top-navbar .user-info .user-name {
-            font-weight: 500;
-            color: #555;
-        }
+.top-navbar .menu-toggle:hover {
+    color: #2c4fa5;
+}
 
-        .top-navbar .user-info i {
-            font-size: 1.5rem;
-            color: #4a73df;
-        }
+.top-navbar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #333;
+}
 
-        .top-navbar .menu-toggle {
-            display: none;
-            cursor: pointer;
-        }
+.top-navbar .user-info i {
+    font-size: 1.5rem;
+    color: #4a73df;
+}
+
 
         @media (max-width: 768px) {
-            body {
-                display: block;
-            }
-
             .sidebar {
-                left: -250px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
+                position: fixed;
+                height: 100%;
+                left: -100%;
+                transition: left 0.3s ease;
             }
 
             .sidebar.active {
-                transform: translateX(0);
+                left: 0;
             }
 
             .main-content-wrapper-shifted {
                 margin-left: 0;
-            }
-
-            .top-navbar {
-                width: 100%;
-                left: 0;
-            }
-
-            .top-navbar .welcome,
-            .top-navbar .user-info {
-                display: none;
-            }
-
-            .top-navbar .menu-toggle {
-                display: block;
-            }
-
-            .rotate-icon {
-                transform: rotate(180deg);
-                transition: transform 0.3s ease;
-            }
+            } 
         }
 
-        /* Hilangkan panah kecil bawaan bootstrap */
-        .sidebar .menu-link.dropdown-toggle::after {
-            content: none !important;
-        }
+.main-content-wrapper {
+    padding: 20px;
+}
 
-        /* Hapus bullet / pseudo-element submenu */
-        .sidebar .dropdown-menu,
-        .sidebar .dropdown-menu .menu-item {
-            list-style: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .sidebar .dropdown-menu .menu-item::before,
-        .sidebar .dropdown-menu .menu-link::before {
-            content: none !important;
-            display: none !important;
-        }
     </style>
 </head>
 
 <body>
     <div class="sidebar" id="sidebar">
         <div>
-            <!-- Bagian Header Sidebar -->
             <div class="sidebar-header-custom">
                 <div class="logo-container">
-                    <!-- Placeholder untuk Logo, ganti dengan gambar Anda -->
                     <img src="lldikti-logo.png" alt="Logo">
                 </div>
                 <div class="pimpinan-info">
@@ -419,71 +283,66 @@
 
             <div class="menu-header">MENU UTAMA</div>
             <ul class="menu">
+                <li class="menu-item">
+                    <a href="{{ route('dashboardpimpinan') }}" class="menu-link {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
 
                 <li class="menu-item">
-                    <a href="#"
-                        class="#">
+                    <a href="{{ route('peminjamanpimpinan') }}" class="menu-link {{ Request::routeIs('peminjamanpimpinan') ? 'active' : '' }}">
                         <i class="fas fa-handshake"></i> Peminjaman Aset
                     </a>
                 </li>
+
                 <li class="menu-item dropdown {{ Request::routeIs(['perbaikanpimpinan','sparepartpimpinan']) ? 'active' : '' }}">
                     <a class="menu-link dropdown-toggle" href="#" role="button" data-dropdown-id="pemeliharaan-menu">
                         <i class="fas fa-tools"></i> Pemeliharaan Aset
-                        <i class="fas fa-chevron-down ms-2
-                         {{ Request::routeIs(['perbaikanpimpinan','sparepartpimpinan']) ? 'rotate-icon' : '' }}">
-                        </i>
                     </a>
-
-                    <ul class="dropdown-menu {{ Request::routeIs(['perbaikanpimpinan','sparepartpimpinan']) ? 'show' : '' }}"
-                        id="pemeliharaan-menu">
-
+                    <ul class="dropdown-menu {{ Request::routeIs(['perbaikanpimpinan','sparepartpimpinan']) ? 'show' : '' }}" id="pemeliharaan-menu">
                         <li class="menu-item">
-                            <a href="#"
-                                class="#">
+                            <a href="{{ route('perbaikanpimpinan') }}" class="menu-link {{ Request::routeIs('perbaikanpimpinan') ? 'active' : '' }}">
                                 <i class="fas fa-wrench"></i> Pengajuan Perbaikan
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a href="#"
-                                class="#">
+                            <a href="{{ route('sparepartpimpinan') }}" class="menu-link {{ Request::routeIs('sparepartpimpinan') ? 'active' : '' }}">
                                 <i class="fas fa-cart-plus"></i> Pembelian Sparepart
                             </a>
                         </li>
                     </ul>
                 </li>
+
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('laporanpimpinan') }}" class="menu-link">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="{{ route('dashboardpimpinan') }}" class="menu-link">
-                        <i class="fas fa-file-alt"></i> Pimpinan
-                    </a>
-                </li>
-                <!-- Added separator and moved logout below reports -->
+
                 <li class="menu-separator"></li>
                 <li class="menu-item">
-                    <a href="#" class="logout-link">
+                    <a href="login" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Log Out
                     </a>
                 </li>
             </ul>
         </div>
-        <!-- Removed logout from bottom section since it's now in the menu -->
     </div>
 
-    <div class="main-content-wrapper-shifted">
+   <div class="main-content-wrapper-shifted" id="main-content">
         <div class="top-navbar">
-            <div class="menu-toggle" id="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="welcome">Selamat Datang, Pimpinan!</div>
-            <div class="user-info">
-                <span class="user-name d-none d-md-inline">Pimpinan</span>
-                <i class="fas fa-user-circle"></i>
-            </div>
+    <div class="welcome">Selamat Datang, Pimpinan!</div>
+    <div class="right-section">
+        <div class="user-info">
+            <span class="user-name d-none d-md-inline">Pimpinan</span>
+            <i class="fas fa-user-circle"></i>
         </div>
+        <div class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+</div>
+
 
         <div class="main-content-wrapper">
             @yield('content')
@@ -491,81 +350,68 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function slideDown(element) {
-                element.classList.add('show');
-            }
 
-            function slideUp(element) {
-                element.classList.remove('show');
-            }
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const menuToggle = document.getElementById('menu-toggle');
 
-            function slideToggle(element) {
-                if (element.classList.contains('show')) {
-                    slideUp(element);
-                } else {
-                    slideDown(element);
-                }
-            }
-
-            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-            dropdownToggles.forEach(toggle => {
-                toggle.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const parentItem = this.closest('.menu-item.dropdown');
-                    const dropdownMenu = parentItem.querySelector('.dropdown-menu');
-                    const arrowIcon = this.querySelector('.fa-chevron-down');
-                    const isExpanded = dropdownMenu.classList.contains('show');
-
-                    // Tutup semua dropdown lain yang terbuka
-                    document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                        if (menu !== dropdownMenu) {
-                            slideUp(menu);
-                            const otherArrow = menu.closest('.menu-item.dropdown').querySelector('.fa-chevron-down');
-                            if (otherArrow) otherArrow.style.transform = 'rotate(0deg)';
-                            menu.closest('.menu-item.dropdown').classList.remove('active');
-                        }
-                    });
-
-                    if (arrowIcon) {
-                        arrowIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-                    }
-
-                    // Toggle dropdown
-                    slideToggle(dropdownMenu);
-
-                    // Toggle kelas aktif pada parent
-                    parentItem.classList.toggle('active', !isExpanded);
-                });
-            });
-
-            // Toggle sidebar (mobile)
-            const menuToggle = document.getElementById('menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.main-content-wrapper-shifted');
-
-            if (menuToggle && sidebar && mainContent) {
-                menuToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                    mainContent.classList.toggle('active');
-                });
-
-                // Klik luar sidebar menutup sidebar (mobile)
-                document.addEventListener('click', function(e) {
-                    if (window.innerWidth <= 768 &&
-                        sidebar.classList.contains('active') &&
-                        !sidebar.contains(e.target) &&
-                        !menuToggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                        mainContent.classList.remove('active');
-                    }
-                });
-            }
+    // 🔹 FUNGSI DROPDOWN
+    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            const parent = this.closest('.menu-item.dropdown');
+            const menu = parent.querySelector('.dropdown-menu');
+            menu.classList.toggle('show');
         });
-    </script>
+    });
+
+    // 🔹 TOGGLE SIDEBAR (desktop & mobile)
+    menuToggle.addEventListener('click', function () {
+        if (window.innerWidth > 768) {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('full');
+        } else {
+            sidebar.classList.toggle('active');
+        }
+    });
+
+    // 🔹 Klik di luar sidebar (khusus mobile)
+    document.addEventListener('click', function (e) {
+        if (
+            window.innerWidth <= 768 &&
+            sidebar.classList.contains('active') &&
+            !sidebar.contains(e.target) &&
+            !menuToggle.contains(e.target)
+        ) {
+            sidebar.classList.remove('active');
+        }
+    });
+
+    // 🔹 Tambahkan class 'shifted' agar halaman laporan tetap punya jarak
+    if (!sidebar.classList.contains('hidden') && window.innerWidth > 768) {
+        mainContent.classList.remove('full');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('menu-toggle');
+    const contentWrapper = document.getElementById('content-wrapper');
+
+    if (toggleBtn && sidebar && contentWrapper) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            contentWrapper.classList.toggle('ml-64'); // jarak default sidebar
+        });
+    }
+});
+
+
+</script>
+
 
     @yield('scripts')
 </body>
-
 </html>
