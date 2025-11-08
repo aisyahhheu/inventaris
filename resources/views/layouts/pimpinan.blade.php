@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaris - @yield('title')</title>
@@ -33,21 +34,6 @@
             z-index: 1000;
             flex-shrink: 0;
         }
-        /* Tambahkan ini ke bagian CSS kamu */
-
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    left: 0; /* biarkan 0 supaya translateX bekerja */
-  }
-
-  .sidebar.active {
-    transform: translateX(0);
-  }
-}
-
-
 
         /* --- Header Sidebar & Menu Utama Styling --- */
         .sidebar .sidebar-header-custom {
@@ -364,6 +350,7 @@
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
+                 left: 0; 
             }
 
             .sidebar.active {
@@ -422,11 +409,12 @@
             <div class="sidebar-header-custom">
                 <div class="logo-container">
                     <!-- Placeholder untuk Logo, ganti dengan gambar Anda -->
-                    <img src="lldikti-logo.png" alt="Logo">
+                    <img src="{{ asset('lldikti-logo.png') }}" alt="Logo" style="height: 60px;">
+
                 </div>
                 <div class="admin-info">
-                    <h3>Pimpinan</h3>
-                    <p>Panel</p>
+                    <h3>Manajemen</h3>
+                    <h3>Inventaris</h3>
                 </div>
             </div>
 
@@ -438,6 +426,13 @@
                     </a>
                 </li>
 
+
+                 <li class="menu-item">
+                    <a href="{{ route('dataaset') }}"
+                        class="menu-link {{ Request::routeIs('dataaset') ? 'active' : '' }}">
+                        <i class="fas fa-handshake"></i> Data Aset
+                    </a>
+                </li>
 
                 <li class="menu-item">
                     <a href="{{ route('peminjamanpimpinan') }}"
@@ -471,21 +466,21 @@
                     </ul>
                 </li>
                 <li class="menu-item">
-                     <a href="{{ route('laporanpimpinan') }}"
-                                class="menu-link {{ Request::routeIs('laporanpimpinan') ? 'active' : '' }}">
+                    <a href="{{ route('laporanpimpinan') }}"
+                        class="menu-link {{ Request::routeIs('laporanpimpinan') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
                 </li>
                 <!-- Added separator and moved logout below reports -->
                 <li class="menu-separator"></li>
                 <li class="menu-item">
-                    <a href="login" class="logout-link">
+                    <a href="/login" class="logout-link">
                         <i class="fas fa-sign-out-alt"></i> Log Out
                     </a>
+
                 </li>
             </ul>
         </div>
-        <!-- Removed logout from bottom section since it's now in the menu -->
     </div>
 
     <div class="main-content-wrapper-shifted">

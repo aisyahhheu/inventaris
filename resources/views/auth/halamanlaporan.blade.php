@@ -94,7 +94,9 @@
                             <td class="jumlah-col">{{ $item->jumlah }}</td>
                             <td class="date-col">{{ date('d/m/Y', strtotime($item->tanggal_pinjam)) }}</td>
                             <td class="date-col">{{ date('d/m/Y', strtotime($item->tanggal_kembali)) }}</td>
-                            <td class="status-col status-{{ strtolower($item->status) }}">{{ $item->status }}</td>
+                           <td class="status-col status-{{ strtolower($item->status_admin ?? 'dipending') }}">{{ $item->status_admin ?? 'Dipending' }}
+</td>
+
                         </tr>
                             @endforeach
                         </tbody>

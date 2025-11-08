@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\PembelianSparepartPegawai;
+use App\Models\PengajuanSparepart; // ⬅️ Tambah model admin
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class FormPembelianSparepartController extends Controller
 {
@@ -16,13 +19,9 @@ class FormPembelianSparepartController extends Controller
         return view('auth.formpembeliansparepart');
     }
 
-    /**
-     * Menyimpan data pengajuan pembelian sparepart.
-     */
     public function store(Request $request)
     {
-        // Validasi data yang masuk
-        $request->validate([
+        $validated = $request->validate([
             'tanggalPengajuan' => 'required|date',
             'namaSparepart' => 'required|string|max:255',
             'kodeBarangTerkait' => 'required|string|max:255',
@@ -31,19 +30,34 @@ class FormPembelianSparepartController extends Controller
             'fotoKerusakan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan data ke database
+        $fotoPath = $request->hasFile('fotoKerusakan')
+            ? $request->file('fotoKerusakan')->store('uploads', 'public')
+            : null;
+
+        // Simpan ke tabel pegawai
         PembelianSparepartPegawai::create([
             'user_id' => auth()->id(),
-            'tanggal_pengajuan' => $request->tanggalPengajuan,
-            'nama_sparepart' => $request->namaSparepart,
-            'kode_barang_terkait' => $request->kodeBarangTerkait,
-            'jumlah' => $request->jumlah,
-            'alasan_pengajuan' => $request->alasanPengajuan,
-            'foto_kerusakan' => $request->file('fotoKerusakan') ? $request->file('fotoKerusakan')->store('uploads') : null,
-            'status' => 'Disetujui',
+            'tanggal_pengajuan' => $validated['tanggalPengajuan'],
+            'nama_sparepart' => $validated['namaSparepart'],
+            'kode_barang_terkait' => $validated['kodeBarangTerkait'],
+            'jumlah' => $validated['jumlah'],
+            'alasan_pengajuan' => $validated['alasanPengajuan'],
+            'foto_kerusakan' => $fotoPath,
+            'status' => 'Pending',
         ]);
 
-        // Redirect kembali dengan pesan sukses
-        return redirect()->route('dashboard.pegawai')->with('success', 'Pengajuan berhasil! Silakan cek status di Laporan Saya.');
+        // Simpan juga ke tabel admin
+        PengajuanSparepart::create([
+            'nama_sparepart'    => $validated['namaSparepart'],
+            'kode_barang'       => $validated['kodeBarangTerkait'],
+            'jumlah'            => $validated['jumlah'],
+            'alasan_pengajuan'  => $validated['alasanPengajuan'],
+            'tanggal_pengajuan' => $validated['tanggalPengajuan'],
+            'foto_kerusakan'    => $fotoPath,
+            'nama_pegawai'      => auth()->user()->name ?? 'Pegawai',
+            'status'            => 'Dipending',
+        ]);
+
+        return redirect()->route('dashboard.pegawai')->with('success', 'Pengajuan berhasil disimpan.');
     }
 }

@@ -10,7 +10,8 @@ use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\DataAsetController;
 use App\Http\Controllers\PeminjamanController;
-use App\Http\Controllers\PemeliharaanController;
+use App\Http\Controllers\PerbaikanController;
+use App\Http\Controllers\PembelianSparepartController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\laporanpimpinanController;
 
@@ -37,7 +38,6 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
-// Forgot password
 // Forgot password (Alur Lengkap)
     Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
@@ -59,21 +59,50 @@ Route::middleware(['auth', 'role:pegawai'])->group(function () {
 
 Route::get('/dashboardpegawai', [DashboardPegawaiController::class, 'index'])->name('dashboard.pegawai');
 
-// Form routes for pegawai
-Route::get('/form-perbaikan', [FormPerbaikanController::class, 'create'])->name('form.perbaikan.create');
-Route::post('/form-perbaikan', [FormPerbaikanController::class, 'store'])->name('form.perbaikan.store');
 
-Route::get('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'showForm'])->name('form.pembelian.sparepart');
-Route::post('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'store'])->name('form.pembelian.sparepart.store');
+// Form routes for pegawai (protected by auth middleware)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/form-perbaikan', [FormPerbaikanController::class, 'create'])->name('form.perbaikan.create');
+    Route::post('/form-perbaikan', [FormPerbaikanController::class, 'store'])->name('form.perbaikan.store');
 
-Route::get('/form-peminjaman', [FormPeminjamanController::class, 'showForm'])->name('form.peminjaman');
-Route::post('/form-peminjaman', [FormPeminjamanController::class, 'store'])->name('form.peminjaman.store');
+    Route::get('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'showForm'])->name('form.pembelian.sparepart');
+    Route::post('/form-pembelian-sparepart', [FormPembelianSparepartController::class, 'store'])->name('form.pembelian.sparepart.store');
+
+    Route::get('/form-peminjaman', [FormPeminjamanController::class, 'showForm'])->name('form.peminjaman');
+    Route::post('/form-peminjaman', [FormPeminjamanController::class, 'store'])->name('form.peminjaman.store');
+
+    Route::get('/halaman-laporan', [HalamanLaporan::class, 'index'])->name('halaman.laporan');
+});
 
 Route::get('/halaman-laporan', [HalamanLaporan::class, 'index'])->name('halaman.laporan');
 Route::get('/halaman-laporanpimpinan', [HalamanLaporanpimpinan::class, 'index'])->name('halaman.laporanpimpinan');
 
 // rute dashboard pimpinan
 Route::get('/dashboardpimpinan', [DashboardPimpinanController::class, 'index'])->name('dashboardpimpinan');
+
+Route::get('/laporanpimpinan', [laporanpimpinanController::class, 'index'])->name('laporanpimpinan');
+
+// rute dashboard pimpinan
+Route::get('/dashboardpimpinan', [DashboardPimpinanController::class, 'index'])->name('dashboardpimpinan');
+
+// ROUTE DETAIL LAPORAN Pimpinan
+Route::get('/laporanpimpinan/data-aset', [laporanpimpinanController::class, 'dataAset'])->name('laporanpimpinan.data_aset');
+Route::get('/laporanpimpinan/barang-masuk', [laporanpimpinanController::class, 'barangMasuk'])->name('laporanpimpinan.barang_masuk');
+Route::get('/laporanpimpinan/barang-keluar', [laporanpimpinanController::class, 'barangKeluar'])->name('laporanpimpinan.barang_keluar');
+Route::get('/laporanpimpinan/pengajuan-perbaikan', [laporanpimpinanController::class, 'pengajuanPerbaikan'])->name('laporanpimpinan.pengajuan_perbaikan');
+Route::get('/laporanpimpinan/pembelian-sparepart', [laporanpimpinanController::class, 'pembelianSparepart'])->name('laporanpimpinan.pembelian_sparepart');
+Route::get('/laporanpimpinan/ringkasan', [laporanpimpinanController::class, 'ringkasan'])->name('laporanpimpinan.ringkasan');
+Route::get('/sparepartpimpinan', function () {
+    return view('sparepartpimpinan');
+})->name('sparepartpimpinan');
+
+Route::get('/perbaikanpimpinan', function () {
+    return view('perbaikanpimpinan');
+})->name('perbaikanpimpinan');
+
+Route::get('/peminjamanpimpinan', function () {
+    return view('peminjamanpimpinan');
+})->name('peminjamanpimpinan');
 
 
 // Rute untuk Manajemen Inventaris
@@ -95,9 +124,21 @@ Route::get('/data-aset/export', [DataAsetController::class, 'export'])->name('da
 Route::get('/data-aset', [DataAsetController::class, 'index'])->name('dataaset');
 
 // Route untuk halaman utama tabel peminjaman
-Route::get('/peminjaman-aset', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-Route::get('/peminjaman/detail/{id}', [PeminjamanController::class, 'showDetail'])
-    ->name('peminjaman.detail');
+Route::prefix('admin')->group(function () {
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::get('/peminjaman/{id}/detail', [PeminjamanController::class, 'detail'])->name('peminjaman.detail');
+    Route::post('/peminjaman/{id}/update-status', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
+});
+
+// Route untuk halaman utama tabel perbaikan 
+Route::prefix('admin')->group(function () {
+    Route::get('/perbaikan', [PerbaikanController::class, 'index'])->name('perbaikan.index');
+    Route::get('/perbaikan/{id}', [PerbaikanController::class, 'detail'])->name('perbaikan.detail');
+    Route::post('/perbaikan/{id}/status', [PerbaikanController::class, 'updateStatus'])->name('perbaikan.updateStatus');
+});
+
+Route::post('/pegawai/perbaikan/store', [PerbaikanController::class, 'store'])->name('pegawai.perbaikan.store');
+
 
 // Route untuk update status peminjaman (Digunakan oleh form di detail modal)
 Route::put('/peminjaman-aset/update-status/{id}', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.update_status');
@@ -106,17 +147,15 @@ Route::get('/pemeliharaan-aset', function () {
     return view('pemeliharaan_aset');
 })->name('pemeliharaan_aset');
 
-Route::get('/pengajuan-perbaikan', [PemeliharaanController::class, 'showPengajuanPerbaikan'])->name('pengajuanperbaikan');
+Route::get('/pengajuan-perbaikan', [PerbaikanController::class, 'index'])->name('pengajuan.perbaikan');
 
-// ROUTE UNTUK MODAL DETAIL (DIPANGGIL VIA AJAX)
-// URL: /pemeliharaan/detail-perbaikan/{id}
-// METHOD: showDetailPerbaikan
-Route::get('/pemeliharaan/detail-perbaikan/{id}', [PemeliharaanController::class, 'showDetailPerbaikan'])->name('pemeliharaan.detail_perbaikan');
+
+Route::get('/pemeliharaan/detail-perbaikan/{id}', [PerbaikanController::class, 'showDetailPerbaikan'])->name('pemeliharaan.detail_perbaikan');
 
 // ROUTE UNTUK HALAMAN PEMBELIAN SPAREPART
-Route::get('/pembelian-sparepart', [PemeliharaanController::class, 'showPembelianSparepart'])->name('pembeliansparepart');
+Route::get('/pembelian-sparepart', [PembelianSparepartController::class, 'showPembelianSparepart'])->name('pembeliansparepart');
 
-Route::get('/pembelian/detail-sparepart/{id}', [PemeliharaanController::class, 'detailSparepart'])
+Route::get('/pembelian/detail-sparepart/{id}', [PembelianSparepartController::class, 'detailSparepart'])
     ->name('pembelian.detail_sparepart');
 Route::get('/laporanadmin', [LaporanController::class, 'index'])->name('laporanadmin');
 Route::get('/laporanpimpinan', [laporanpimpinanController::class, 'index'])->name('laporanpimpinan');

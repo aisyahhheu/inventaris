@@ -2,43 +2,78 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Peminjaman; // Gunakan namespace yang sudah diimpor
+use App\Models\Peminjaman;
+use App\Models\PeminjamanPegawai;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException; // Jika ingin menangkap error DB secara spesifik
+use Illuminate\Database\QueryException;
 
 class PeminjamanController extends Controller
 {
+    /**
+     * Menampilkan semua data peminjaman untuk admin
+     */
     public function index()
     {
-        // Jika model Peminjaman sudah diimpor, gunakan namanya secara langsung
         $peminjaman = Peminjaman::orderBy('tgl_pinjam', 'desc')->get();
-        
-        // Pastikan nama view benar (misalnya: 'peminjaman.index')
-        return view('peminjaman', compact('peminjaman')); 
+        return view('peminjaman', compact('peminjaman'));
     }
 
+    /**
+     * Menampilkan detail peminjaman (untuk modal / halaman detail)
+     */
     public function detail($id)
     {
-        // Gunakan Peminjaman::findOrFail() agar secara otomatis menangani kasus ID tidak ditemukan (404)
-        $data = Peminjaman::findOrFail($id); 
-
-        return view('peminjaman.detail_modal_content', compact('data')); 
+        $peminjaman = Peminjaman::findOrFail($id);
+        return view('detail', compact('peminjaman')); // 👈 diarahkan ke file detail.blade.php langsung
     }
 
+    /**
+     * Update status peminjaman oleh admin
+     */
     public function updateStatus(Request $request, $id)
     {
-        // Gunakan findOrFail agar langsung throw 404 jika ID tidak ditemukan
-        $peminjaman = Peminjaman::findOrFail($id); 
+        try {
+            $peminjaman = Peminjaman::findOrFail($id);
 
-        // Lakukan validasi input status
-        $request->validate([
-            'status' => 'required|in:Disetujui,Ditolak,Selesai', // Sesuaikan status yang boleh diupdate
-        ]);
+            $request->validate([
+                'status' => 'required|in:Disetujui,Ditolak,Dipending,Selesai',
+            ]);
 
-        $peminjaman->status = $request->status;
-        $peminjaman->save();
+            $peminjaman->status = $request->status;
+            $peminjaman->save();
+            return response()->json(['message' => 'Status berhasil diperbarui']);
 
-        // Redirect kembali ke halaman sebelumnya atau halaman index
-        return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diubah menjadi ' . $request->status . '.');
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Status berhasil diperbarui menjadi ' . $request->status]);
+            }
+
+            return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diubah menjadi ' . $request->status . '.');
+
+        } catch (QueryException $e) {
+            return back()->with('error', 'Terjadi kesalahan saat mengubah status: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Transfer data dari form pegawai ke tabel admin
+     */
+    public function fromPegawaiToAdmin(PeminjamanPegawai $pegawaiForm)
+    {
+        try {
+            Peminjaman::create([
+                'kode_barang'   => 'AUTO-' . strtoupper(substr($pegawaiForm->barang_yang_ingin_dipinjam, 0, 3)) . rand(100, 999),
+                'nama_barang'   => $pegawaiForm->barang_yang_ingin_dipinjam,
+                'nama_pegawai'  => $pegawaiForm->nama_pegawai,
+                'unit_divisi'   => $pegawaiForm->tim_kerja,
+                'jumlah'        => $pegawaiForm->jumlah,
+                'tgl_pinjam'    => $pegawaiForm->tanggal_pinjam,
+                'tgl_kembali'   => $pegawaiForm->tanggal_kembali,
+                'status'        => 'Dipending',
+            ]);
+        } catch (QueryException $e) {
+            return response()->json([
+                'error' => 'Gagal mengirim data ke admin: ' . $e->getMessage()
+            ]);
+        }
     }
 }

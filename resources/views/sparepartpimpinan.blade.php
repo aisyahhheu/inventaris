@@ -10,6 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pimpinan - Persetujuan sparepart</title>
+
     {{-- Memuat Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -20,6 +21,7 @@
             --color-danger: #DC2626; /* Merah (Aksi Mendesak) */
             --color-warning: #D97706; /* Kuning/Oranye (Peringatan) */
             --color-success: #059669; /* Hijau (Disetujui/Sukses) */
+
             --color-white: #FFFFFF;
             --color-gray-100: #F3F4F6;
             --color-gray-200: #E5E7EB;
@@ -85,11 +87,13 @@
         hr { border: 0; border-top: 1px solid var(--color-gray-300); }
 
         /* Card Colors */
+
         .bg-card-primary { background-color: var(--color-primary); }
         .bg-card-danger { background-color: var(--color-danger); }
         .bg-card-warning { background-color: var(--color-warning); }
         .bg-card-success { background-color: var(--color-success); }
         
+
         /* Card Styling */
         .card-shadow-xl { 
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 
@@ -105,6 +109,7 @@
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
+
 
         /* Card Content */
         .text-5xl { font-size: 3rem; line-height: 1; } /* text-5xl (override, 3rem is approx 48px) */
@@ -274,10 +279,12 @@
         .bg-even-row { background-color: var(--color-white); }
         tr:hover { background-color: #EFF6FF; } /* hover:bg-blue-50 */
 
+
         /* Sticky Column Adjustments for zebra stripping */
         tr:nth-child(odd) .sticky-col,
         tr:nth-child(odd) .sticky-action { background-color: #F9FAFB; }
         tr:nth-child(even) .sticky-col,
+
         tr:nth-child(even) .sticky-action { background-color: var(--color-white); }
 
         tr:hover .sticky-col,
@@ -343,6 +350,7 @@
             border-top: 1px solid var(--color-gray-200);
         }
 
+
     </style>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
@@ -351,6 +359,7 @@
         
         <main class="flex-1 overflow-y-auto p-4 md:p-10 space-y-10">
             
+
             <div>
                 <h1 class="text-2xl font-extrabold text-gray-800 mb-5 flex items-center">
                     <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
@@ -374,6 +383,7 @@
                             <i class="fas fa-gavel text-white text-2xl"></i>
                         </div>
                     </div>
+
                     <a href="#" class="card-action-link">
                         Klik untuk Tinjau <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -391,6 +401,7 @@
                             <i class="fas fa-exchange-alt text-white text-2xl"></i>
                         </div>
                     </div>
+
                     <a href="#" class="card-action-link">
                         Klik untuk Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -408,6 +419,7 @@
                             <i class="fas fa-clock text-white text-2xl"></i>
                         </div>
                     </div>
+
                     <a href="#" class="card-action-link">
                         Klik untuk Peringatan <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -425,6 +437,7 @@
                             <i class="fas fa-thumbs-up text-white text-2xl"></i>
                         </div>
                     </div>
+
                     <a href="#" class="card-action-link">
                         Klik untuk Histori <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -434,12 +447,14 @@
             <hr class="border-gray-300">
 
             {{-- ## Filter dan Pencarian Canggih --}}
+
             <div class="bg-white p-6 card-shadow-xl">
                 <h2 class="text-xl font-extrabold text-gray-800 mb-5 flex items-center">
                     <i class="fas fa-sliders-h text-blue-600 mr-2"></i> Pengaturan Tampilan & Pencarian
                 </h2>
                 
                 {{-- Search Bar --}}
+
                 <div class="search-container">
                     <input type="text" id="search-input" placeholder="CARI BERDASARKAN KODE ASET, NAMA PENGAJU, NAMA ASET..."
                             class="search-input">
@@ -457,11 +472,13 @@
                             <option value="pending">Pending (Menunggu)</option>
                             <option value="disetujui">Disetujui</option>
                             <option value="ditolak">Ditolak</option>
+
                         </select>
                     </div>
 
                     {{-- Filter Tanggal Mulai --}}
                     <div>
+
                         <label for="filter-start-date" class="filter-label">Tanggal Mulai Peminjaman</label>
                         <div class="date-input-group">
                             <input type="date" id="filter-start-date" class="filter-date">
@@ -473,6 +490,7 @@
 
                     {{-- Filter Tanggal Selesai --}}
                     <div>
+
                         <label for="filter-end-date" class="filter-label">Tanggal Akhir Peminjaman</label>
                         <div class="date-input-group">
                             <input type="date" id="filter-end-date" class="filter-date">
@@ -488,6 +506,7 @@
             <hr class="border-gray-300">
 
             {{-- ## Tabel DAFTAR PERMOHONAN PEMBELIAN SPAREPART--}}
+
             <div class="bg-white card-shadow-xl" id="permohonan-table-section" style="border-radius: 0.75rem;">
                 <div class="table-title-bar">
                     DAFTAR PERMOHONAN PEMBELIAN SPAREPART<i class="fas fa-list-alt ml-2"></i>
@@ -497,6 +516,7 @@
                 <div class="overflow-x-auto max-h-96">
                     <table class="min-w-full table-auto" id="permohonan-table">
                         <thead>
+
                             <tr class="uppercase text-xs tracking-wider">
                                 <th class="sticky-col header text-center font-bold whitespace-nowrap">NO</th>
                                 <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Tanggal Pengajuan</th>
@@ -506,11 +526,13 @@
                                 <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Diajukan oleh</th>
                                 <th class="px-4 py-3 text-left font-bold whitespace-nowrap">Unit/Divisi</th>
                                 <th class="px-4 py-3 text-center font-bold whitespace-nowrap">Status</th>
+
                                 <th class="sticky-action header text-center font-bold whitespace-nowrap">TINDAK LANJUT</th>
                             </tr>
                         </thead>
                         <tbody>
                             
+
                             {{-- Row 1: Disetujui (Ganjil) --}} 
                             <tr class="bg-odd-row" data-status-val="disetujui" data-date="2025-09-14">
                                 <td class="sticky-col text-center font-medium text-gray-600">1</td>
@@ -533,6 +555,7 @@
                             </tr>
                             
                             {{-- Row 2: Pending (Genap) - Target Utama Pimpinan --}}
+
                             <tr class="bg-even-row" data-status-val="pending" data-date="2025-09-20">
                                 <td class="sticky-col text-center font-medium text-gray-600">2</td>
                                 <td>20/09/2025</td>
@@ -554,6 +577,7 @@
                             </tr>
 
                             {{-- Row 3: Ditolak (Ganjil) --}}
+
                             <tr class="bg-odd-row" data-status-val="ditolak" data-date="2025-09-22">
                                 <td class="sticky-col text-center font-medium text-gray-600">3</td>
                                 <td>22/09/2025</td>
@@ -569,22 +593,28 @@
                                 </td>
                                 <td class="sticky-action text-center">
                                     <a href="#" class="action-link gray">
+
                                         <i class="fas fa-times-circle mr-1"></i> Detail
                                     </a>
                                 </td>
                             </tr>
 
+
                             {{-- Tambahkan baris data dummy lainnya di sini --}}
+
                             
                         </tbody>
                     </table>
                 </div>
+
                 <div class="table-footer">
+
                     <span id="display-row-count">Menampilkan 3 dari 3 Permohonan Baru.</span>
                 </div>
             </div>
         </main>
     </div>
+
 
     {{-- Script untuk Fungsionalitas Filter dan Card Click (Tidak diubah) --}}
     <script>

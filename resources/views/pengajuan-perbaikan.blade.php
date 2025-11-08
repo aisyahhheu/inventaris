@@ -62,15 +62,83 @@
 </head>
 <body class="bg-gray-100 font-sans min-h-screen">
 
-    <div class="flex-1 flex flex-col overflow-hidden">
-        
-        <main class="flex-1 overflow-y-auto p-4 md:p-10 space-y-10">
-            
-                    <div>
-  <h1 class="text-2xl font-extrabold text-gray-800 mb-5 flex items-center">
-    <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
-    RINGKASAN PERSETUJUAN
-  </h1>
+    {{-- KONTEN UTAMA --}}
+    <div class="card"
+        id="mainPengajuanCard" {{-- ID diubah ke Pengajuan --}}
+        data-detail-url="{{ route('pemeliharaan.detail_perbaikan', ['id' => 'TEMP_ID']) }}"> {{-- ROUTE diubah ke pengajuan perbaikan --}}
+
+        {{-- HEADER BIRU (Menggunakan page-subheader-card) --}}
+        <div class="page-subheader-card">
+            <h4 class="mb-0">Pengajuan Perbaikan Aset</h4> {{-- JUDUL diubah ke Pengajuan Perbaikan --}}
+        </div>
+
+        {{-- CARD BODY (Tabel Data) --}}
+        <div class="card-body">
+            <table id="tabelPengajuanPerbaikan">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kode Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Jenis Barang</th>
+                        <th>Jenis Kerusakan</th>
+                        <th>Keterangan Tambahan</th>
+                        <th>Foto Kerusakan</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Status</th>
+                        <th>Diajukan Oleh</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @php $no = 1; @endphp
+                    @forelse ($pengajuan as $data)
+                    @php
+                    $status = $data->status ?? 'Dipending';
+                    $statusClass = 'status-' . strtolower(str_replace(' ', '', $status));
+                    $tglPengajuan = $data->tgl_pengajuan ? \Carbon\Carbon::parse($data->tgl_pengajuan)->format('d/m/Y') : '-';
+                    @endphp
+                    <tr>
+                        <td>{{ $no++ }}</td>
+                        <td>{{ $data->kode_barang ?? '-' }}</td>
+                        <td>{{ $data->nama_barang ?? '-' }}</td>
+                        <td>{{ $data->jenis_barang ?? '-' }}</td>
+                        <td>{{ $data->jenis_kerusakan ?? '-' }}</td>
+                        <td>{{ $data->keterangan_tambahan ?? '-' }}</td>
+                        <td>
+                            @if ($data->foto_kerusakan_path)
+                            <a href="{{ asset('storage/' . $data->foto_kerusakan_path) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $data->foto_kerusakan_path) }}" alt="Foto" width="70" style="border-radius:5px;">
+                            </a>
+                            @else
+                            <span>Tidak ada</span>
+                            @endif
+                        </td>
+                        <td>{{ $tglPengajuan }}</td>
+                        <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
+                        <td>{{ $data->user->name ?? 'Pegawai Tidak Ditemukan' }}</td>
+                        <td>
+                            <button
+                                class="btn-detail"
+                                data-id="{{ $data->id }}"
+                                onclick="tampilkanDetailPengajuan(this)">
+                                Lihat Detail
+                            </button>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="11" style="text-align:center; padding:20px; color:#6c757d;">
+                            Tidak ada pengajuan perbaikan yang ditemukan.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+
+            </table>
+        </div>
+    </div>
 </div>
             <hr class="border-gray-300">
             

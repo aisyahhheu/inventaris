@@ -268,18 +268,27 @@
         .action-btn:hover {
             filter: brightness(1.1);
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
     </style>
 
-    <div class="card"
-        id="peminjamanCard"
-        data-detail-url="{{ route('peminjaman.detail', ['id' => 'TEMP_ID']) }}">
-
+    <div class="card" id="peminjamanCard" data-detail-url="{{ route('peminjaman.detail', ['id' => 'TEMP_ID']) }}">
         <div class="page-subheader-card">
             <h4 class="mb-0">Peminjaman Aset</h4>
         </div>
 
         <div class="card-body">
-            <table id="tabelPeminjaman">
+            <table id="tabelPeminjaman" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -296,16 +305,7 @@
                 </thead>
                 <tbody>
                     @php $no = 1; @endphp
-                    {{-- Ganti $peminjaman dengan variabel yang benar dari Controller Anda --}}
                     @forelse ($peminjaman as $data)
-                    @php
-                    $status = $data->status ?? 'Tidak Diketahui';
-                    $statusClass = 'status-' . strtolower(str_replace(' ', '', $status));
-
-                    // Menggunakan Carbon (asumsi Carbon sudah diimport/tersedia)
-                    $tglKembali = $data->tgl_kembali ? \Carbon\Carbon::parse($data->tgl_kembali)->format('d/m/Y') : '-';
-                    $tglPinjam = $data->tgl_pinjam ? \Carbon\Carbon::parse($data->tgl_pinjam)->format('d/m/Y') : '-';
-                    @endphp
                     <tr>
                         <td>{{ $no++ }}</td>
                         <td>{{ $data->kode_barang ?? '-' }}</td>
@@ -313,115 +313,178 @@
                         <td>{{ $data->nama_pegawai ?? '-' }}</td>
                         <td>{{ $data->unit_divisi ?? '-' }}</td>
                         <td>{{ $data->jumlah ?? '0' }}</td>
-                        <td>{{ $tglPinjam }}</td>
-                        <td>{{ $tglKembali }}</td>
-                        <td><span class="badge {{ $statusClass }}">{{ $status }}</span></td>
+                        <td>{{ \Carbon\Carbon::parse($data->tgl_pinjam)->format('d/m/Y') }}</td>
+                        <td>{{ $data->tgl_kembali ? \Carbon\Carbon::parse($data->tgl_kembali)->format('d/m/Y') : '-' }}</td>
                         <td>
-                            @if(isset($data->id))
-                            <button
-                                class="btn-detail"
-                                data-id="{{ $data->id }}"
-                                onclick="tampilkanDetail(this)">
+                            <span class="badge 
+                                @if($data->status == 'Disetujui') bg-success
+                                @elseif($data->status == 'Ditolak') bg-danger
+                                @elseif($data->status == 'Dipending') bg-warning
+                                @else bg-secondary @endif">
+                                {{ $data->status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-success btn-sm" data-id="{{ $data->id }}" onclick="tampilkanDetail(this)">
                                 Lihat Detail
                             </button>
-                            @else
-                            <button class="btn-detail" disabled>Error ID</button>
-                            @endif
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" style="text-align: center; padding: 20px; color: #6c757d;">
-                            Tidak ada data peminjaman aset yang ditemukan.
-                        </td>
+                        <td colspan="10" class="text-center text-muted">Tidak ada data peminjaman.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
-{{-- MODAL DETAIL --}}
-<div id="detailModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Detail Peminjaman</h5>
-            <span class="close-button" onclick="tutupModal()">&times;</span>
-        </div>
-        <div class="modal-body" id="modal-body-content">
-            <div style="text-align:center;">
-                <p>Memuat detail peminjaman...</p>
+    {{-- MODAL DETAIL --}}
+    <div id="detailModal" class="modal" style="display:none;">
+        <div class="modal-content" style="width: 600px; margin: 10% auto; background: #fff; border-radius: 10px; padding: 20px; position: relative;">
+            <div class="modal-header" style="display:flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;">
+                <h5 class="modal-title">Detail Peminjaman</h5>
+                <button class="close-button" onclick="tutupModal()" style="background:none; border:none; font-size: 20px;">&times;</button>
+            </div>
+
+            <div class="modal-body" id="modal-body-content" style="padding: 20px;">
+                <div style="text-align:center;">
+                    <p>Memuat detail peminjaman...</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    const mainCard = document.getElementById('mainPeminjamanCard');
+    <script>
+        const baseUrl = document.getElementById('peminjamanCard').getAttribute('data-detail-url');
 
-    if (!mainCard) {
-        console.error("Kesalahan JavaScript: Elemen 'mainPeminjamanCard' tidak ditemukan.");
-    }
+        function tampilkanDetail(element) {
+            const id = element.getAttribute('data-id');
+            const modalBody = document.getElementById('modal-body-content');
+            const detailModal = document.getElementById('detailModal');
 
-    const baseUrl = mainCard ? mainCard.getAttribute('data-detail-url') : null;
-
-    function tampilkanDetail(element) {
-        const id = element.getAttribute('data-id');
-        const modalBody = document.getElementById('modal-body-content');
-        const detailModal = document.getElementById('detailModal');
-
-        if (!baseUrl) {
-            console.error("Kesalahan: Base URL route tidak ditemukan. Pastikan 'peminjaman.detail' terdaftar di web.php.");
-            modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
-                                    Kesalahan Konfigurasi Route. Cek Console Log.
-                                  </p>`;
+            modalBody.innerHTML = `<p class="text-center">Memuat detail peminjaman...</p>`;
             detailModal.style.display = 'block';
-            return;
+
+            // 🟩 Tambahkan baris ini di sini:
+    // Menyimpan ID peminjaman aktif di modal
+    document.getElementById('detailModal').setAttribute('data-current-id', id);
+
+            fetch(baseUrl.replace('TEMP_ID', id))
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal mengambil data');
+                    return res.text();
+                })
+                .then(html => {
+                    modalBody.innerHTML = html;
+                    initDetailModalButtons(); 
+                })
+                .catch(err => {
+                    console.error(err);
+                    modalBody.innerHTML = `<p style="color:red; text-align:center;">Gagal memuat data peminjaman.</p>`;
+                });
         }
 
-        if (!baseUrl.includes('TEMP_ID')) {
-            console.error("Kesalahan: URL detail tidak valid.");
-            modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
-                                    Kesalahan Konfigurasi URL Template.
-                                  </p>`;
-            detailModal.style.display = 'block';
-            return;
+        function tutupModal() {
+            document.getElementById('detailModal').style.display = 'none';
         }
 
-        // Tampilkan loading dan Modal
-        modalBody.innerHTML = '<div style="text-align:center; padding: 50px;"><img src="https://placehold.co/40x40/0b4f8c/white?text=..." alt="Loading" style="border-radius:50%;"> <p style="margin-top: 10px;">Memuat data...</p></div>';
-        detailModal.style.display = 'block';
-
-        const detailUrl = baseUrl.replace('TEMP_ID', id);
-
-        fetch(detailUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Gagal mengambil data detail. Status: ${response.status}.`);
-                }
-                return response.text();
-            })
-            .then(html => {
-                modalBody.innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error AJAX:', error.message);
-                modalBody.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">
-                                        ${error.message} <br> Kesalahan terjadi di sisi server.
-                                      </p>`;
-            });
-    }
-
-    function tutupModal() {
-        document.getElementById('detailModal').style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('detailModal');
-        if (event.target == modal) {
-            tutupModal();
+        window.onclick = function(e) {
+            const modal = document.getElementById('detailModal');
+            if (e.target == modal) tutupModal();
         }
+function initDetailModalButtons() {
+    // contoh: tombol dengan class .btn-setujui .btn-tolak .btn-pimpinan
+    const btnSetujui = document.querySelector('#detailModal .btn-setujui');
+    const btnTolak   = document.querySelector('#detailModal .btn-tolak');
+    const btnPimpin  = document.querySelector('#detailModal .btn-pimpinan');
+
+    // ambil id peminjaman dari data-attribute di modal atau elemen hidden
+    const peminjamanId = document.querySelector('#detailModal').getAttribute('data-current-id');
+
+    if (btnSetujui) {
+        btnSetujui.addEventListener('click', () => {
+            updateStatusAjax(peminjamanId, 'Disetujui');
+        });
     }
-</script>
-@endsection
+    if (btnTolak) {
+        btnTolak.addEventListener('click', () => {
+            updateStatusAjax(peminjamanId, 'Ditolak');
+        });
+    }
+    if (btnPimpin) {
+        btnPimpin.addEventListener('click', () => {
+            updateStatusAjax(peminjamanId, 'Dipending'); // atau status lain sesuai logika
+        });
+    }
+}
+
+ // 5️⃣ 🟦 Fungsi CSRF dan Update Status (ini yang kamu tanyakan)
+    function getCsrfToken() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    }
+
+    function ubahStatus(status) {
+    const id = document.getElementById('detailModal').getAttribute('data-current-id'); // ambil ID aktif dari modal
+    const token = getCsrfToken();
+
+    if (!id) {
+        alert('ID peminjaman tidak ditemukan.');
+        return;
+    }
+
+    if (!confirm(`Yakin ingin mengubah status menjadi "${status}"?`)) return;
+
+    fetch(`/admin/peminjaman/${id}/update-status`, {
+        method: 'POST', // atau PATCH tergantung route Laravel kamu
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status })
+    })
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw err; });
+        return res.json();
+    })
+    .then(data => {
+        alert(data.message || `Status berhasil diubah menjadi ${status}`);
+        location.reload();
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Gagal memperbarui status: ' + (err.message || JSON.stringify(err)));
+    });
+}
+    function updateStatusAjax(id, status) {
+    const token = getCsrfToken();
+
+    fetch(`/admin/peminjaman/${id}/update-status`, {
+        method: 'POST', // bisa PATCH tergantung route
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ status })
+    })
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw err; });
+        return res.json();
+    })
+    .then(data => {
+        alert(data.message || 'Status berhasil diubah');
+        location.reload();
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Gagal memperbarui status: ' + (err.message || JSON.stringify(err)));
+    });
+}
+
+        
+    </script>
+    @endsection

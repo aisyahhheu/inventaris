@@ -15,11 +15,6 @@
     
     {{-- CSS MURNI DI SINI --}}
     <style>
-/* ====================================== */
-/* CSS MURNI (Pure CSS)          */
-/* ====================================== */
-
-/* --- PALET WARNA & VARIABEL --- */
 :root {
     --color-primary: #1E3A8A; /* Biru Gelap (Kontrol) */
     --color-danger: #DC2626; /* Merah (Aksi Mendesak) */
@@ -542,6 +537,7 @@ body {
                 </div>
 
                 {{-- Card 2: Peminjaman Aktif (Primary) --}}
+
                 <div data-filter="disetujui" class="action-card bg-card-primary card-shadow-xl card-hover-pop">
                     <div class="card-header">
                         <div>
@@ -559,6 +555,7 @@ body {
                 </div>
 
                 {{-- Card 3: Keterlambatan Pengembalian (Warning) --}}
+
                 <div data-filter="terlambat" class="action-card bg-card-warning card-shadow-xl card-hover-pop">
                     <div class="card-header">
                         <div>
@@ -576,6 +573,7 @@ body {
                 </div>
 
                 {{-- Card 4: Total Disetujui (Success) --}}
+
                 <div data-filter="disetujui-bulan-ini" class="action-card bg-card-success card-shadow-xl card-hover-pop">
                     <div class="card-header">
                         <div>
@@ -592,6 +590,7 @@ body {
                     </p>
                 </div>
             </div>
+
 
             <hr class="section-divider">
 
@@ -619,11 +618,14 @@ body {
                             <option value="pending">Pending (Menunggu)</option>
                             <option value="disetujui">Disetujui</option>
                             <option value="ditolak">Ditolak</option>
+
+
                         </select>
                     </div>
 
                     {{-- Filter Tanggal Mulai --}}
                     <div>
+
                         <label for="filter-start-date" class="filter-label">Tanggal Mulai Peminjaman</label>
                         <div class="date-input-group">
                             <input type="date" id="filter-start-date" class="filter-input-date">
@@ -635,10 +637,12 @@ body {
 
                     {{-- Filter Tanggal Selesai --}}
                     <div>
+
                         <label for="filter-end-date" class="filter-label">Tanggal Akhir Peminjaman</label>
                         <div class="date-input-group">
                             <input type="date" id="filter-end-date" class="filter-input-date">
                             <button type="button" id="reset-end-date" class="reset-date-btn" title="Reset Tanggal Akhir">
+
                                 <i class="fas fa-undo"></i>
                             </button>
                         </div>
@@ -658,12 +662,14 @@ body {
                 </div>
                 
                 {{-- Kontainer Tabel yang Dapat Di-scroll Horizontal --}}
+
                 <div class="table-scroll-container">
                     <table class="data-table" id="permohonan-table">
                         <thead>
                             <tr>
                                 <th class="sticky-col header text-center border-r">NO</th>
                                 <th class="">Tanggal Peminjaman</th>
+                                <th class="">Kode Barang</th>
                                 <th class="">NIP</th>
                                 <th class="">Nama Peminjam</th>
                                 <th class="">Nama Aset</th>
@@ -675,10 +681,12 @@ body {
                         </thead>
                         <tbody>
                             
-                            {{-- Row 1: Disetujui (Ganjil) --}}                            
+
+                            {{-- Row 1: Disetujui (Ganjil) --}} 
                             <tr data-status-val="disetujui" data-date="2025-09-14">
                                 <td class="sticky-col text-center border-r">1</td>
                                 <td class="">14/09/2025</td>
+                                 <td class="" data-col="kdbrng">123456789</td>
                                 <td class="" data-col="nip">123456789</td>
                                 <td class="font-semibold" data-col="nama">Andi Purnomo</td>
                                 <td class="" data-col="aset">Laptop ASUS ROG</td>
@@ -697,9 +705,11 @@ body {
                             </tr>
                             
                             {{-- Row 2: Pending (Genap) - Target Utama Pimpinan --}}
+
                             <tr data-status-val="pending" data-date="2025-09-20">
                                 <td class="sticky-col text-center border-r">2</td>
                                 <td class="">20/09/2025</td>
+                                 <td class="" data-col="kdbrng">123456789</td>
                                 <td class="" data-col="nip">987654321</td>
                                 <td class="font-semibold" data-col="nama">Budi Santoso</td>
                                 <td class="" data-col="aset">Proyektor EPSON</td>
@@ -718,9 +728,11 @@ body {
                             </tr>
 
                             {{-- Row 3: Ditolak (Ganjil) --}}
+
                             <tr data-status-val="ditolak" data-date="2025-09-22">
                                 <td class="sticky-col text-center border-r">3</td>
                                 <td class="">22/09/2025</td>
+                                 <td class="" data-col="kdbrng">123456789</td>
                                 <td class="" data-col="nip">555444333</td>
                                 <td class="font-semibold" data-col="nama">Citra Dewi</td>
                                 <td class="" data-col="aset">Kamera DSLR</td>
@@ -744,12 +756,14 @@ body {
                         </tbody>
                     </table>
                 </div>
+
                 <div class="table-footer">
                     <span id="display-row-count">Menampilkan 3 dari 3 Permohonan Baru.</span>
                 </div>
             </div>
         </main>
     </div>
+
 
     {{-- Script untuk Fungsionalitas Filter dan Card Click (TETAP SAMA) --}}
     <script>
@@ -759,6 +773,8 @@ body {
             const startDateInput = document.getElementById('filter-start-date');
             const endDateInput = document.getElementById('filter-end-date');
             const tableBody = document.querySelector('#permohonan-table tbody');
+
+
             const tableRows = Array.from(tableBody.querySelectorAll('tr')); 
             const displayCountElement = document.getElementById('display-row-count');
             const actionCards = document.querySelectorAll('.action-card');
@@ -944,6 +960,7 @@ body {
             applyFilters(); 
         });
     </script>
+
 
     <div class="modal fade" id="detailPerbaikanModal" tabindex="-1" aria-labelledby="detailPerbaikanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg"> <div class="modal-content">

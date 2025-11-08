@@ -772,7 +772,7 @@
         <div class="sidebar" id="sidebar">
             <div class="logo" id="logo">
                 <a href="{{ route('dashboard.pegawai') }}">
-                    <img src="{{ asset('lldikti logo.png') }}" alt="LLDIKTI Logo" />
+                    <img src="{{ asset('lldikti-logo.png') }}" alt="LLDIKTI Logo" />
                 </a>
             </div>
             <ul class="menu">
